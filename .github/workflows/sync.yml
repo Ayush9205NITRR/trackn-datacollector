@@ -31,6 +31,9 @@ jobs:
           START_DATE: ${{ inputs.since || vars.START_DATE || '2026-04-01' }}
         run: python -m collector sync
       - name: Commit snapshot and reports
+        # Also after a failed Airtable upload, so the collected deals and raw actor
+        # output (paid Apify runs) are kept; the next sync uploads them.
+        if: ${{ !cancelled() }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
