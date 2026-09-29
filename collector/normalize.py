@@ -9,9 +9,10 @@ actor uses a name that is not listed here.
 import os
 import re
 from datetime import date, datetime, timezone
+from email.utils import parsedate_to_datetime
 from typing import Iterable, Optional
 
-from .schema import FUNDING, MNA, FundingRecord
+from .schema import FUNDING, IPO, MNA, FundingRecord
 
 FIELD_ALIASES = {
     "company": ["companyName", "company_name", "company", "startupName", "startup",
@@ -34,11 +35,13 @@ FIELD_ALIASES = {
     "round_date": ["latestFundingDate", "lastFundingDate", "roundDate", "fundingDate",
                    "announcedDate", "announcedOn", "announced_date", "dealDate",
                    "filingDate", "publishedAt", "pubDate", "date"],
+    "post_date": ["publishedAt", "pubDate", "published", "publishDate", "publishedDate",
+                  "articleDate"],
     "investors": ["investors", "latestRoundInvestors", "leadInvestors", "leadInvestor",
                   "lead_investor", "investorNames", "backedBy", "institutionalInvestors"],
     "acquirer": ["acquirer", "acquirerName", "acquiredBy", "buyer"],
-    "deal_type": ["dealType", "deal_type", "recordType", "transactionType", "type",
-                  "newsType"],
+    "deal_type": ["dealType", "deal_type", "recordType", "transactionType", "newsCategory",
+                  "type", "newsType"],
     "total_funding": ["totalFunding", "totalFundingAmount", "total_funding",
                       "fundingTotal"],
 }
@@ -96,6 +99,10 @@ def parse_date(value) -> Optional[date]:
     try:
         return datetime.fromisoformat(text.replace("Z", "+00:00")).date()
     except ValueError:
+        pass
+    try:  # RSS style: "Tue, 29 Sep 2026 06:34:49 +0000"
+        return parsedate_to_datetime(text).date()
+    except (TypeError, ValueError, IndexError):
         pass
     for fmt in ("%d %b %Y", "%d %B %Y", "%b %d, %Y", "%B %d, %Y",
                 "%d-%m-%Y", "%d/%m/%Y", "%b %Y", "%B %Y", "%Y-%m"):
@@ -186,12 +193,16 @@ _ACQUIRES = re.compile(r"^(?P<acq>.+?)\s+(?:acquires|buys|acqui-hires|takes over
 _ACQUIRED_BY = re.compile(r"^(?P<target>.+?)\s+(?:is\s+|gets\s+)?acquired by\s+"
                           r"(?P<acq>.+?)(?:\s+(?:for|in|at|amid)\s|[,:;]|$)", re.I)
 _RAISES = re.compile(r"^(?P<company>.+?)\s+(?:raises|secures|bags|gets|nets|closes)\s", re.I)
+# Needs a size unit, so share prices like "priced at Rs 1,800" aren't read as deal size.
 _HEADLINE_MONEY = re.compile(r"(?:\$|₹|\brs\.?|\binr\b|\busd\b)\s?[\d.,]+\s?"
-                            r"(?:mn|million|m|bn|billion|b|cr|crore|lakh|k)?\b", re.I)
+                            r"(?:mn|million|m|bn|billion|b|cr|crore|lakh|k)\b", re.I)
 _LED_BY = re.compile(r"\bled by\s+(.+?)(?:\s+(?:and|with|at|in|for|to)\s+(?:others|participation)"
                      r"|[,:;]|$)", re.I)
 _DESCRIPTOR = re.compile(r".*\b(?:startup|major|giant|unicorn|firm|company|platform|"
-                         r"player|maker|brand|provider|marketplace)\s+", re.I)
+                         r"player|maker|brand|provider|marketplace|operator|parent)\s+", re.I)
+# "AceVector’s IPO", "Moneyview IPO", "NSE makes muted debut" -> the company alone
+_IPO_TAIL = re.compile(r"(?:['’]s)?\s+(?:ipo\b|makes|files|lists|debuts|opens|gets|to\b|set\b|"
+                       r"shares\b|sees|subscribed).*$", re.I)
 
 
 def _clean_name(text: str) -> str:
@@ -209,18 +220,41 @@ def is_series_a_plus(stage: str) -> bool:
 
 
 def qualifies(rec: FundingRecord, min_unlabeled_usd: float) -> bool:
-    """M&A, Series A-or-later rounds, and unlabeled rounds of at least min_unlabeled_usd."""
-    if rec.deal_type == MNA:
+    """M&A, IPOs, Series A-or-later rounds, and unlabeled rounds of at least
+    min_unlabeled_usd."""
+    if rec.deal_type in (MNA, IPO):
         return True
     if rec.stage:
         return is_series_a_plus(rec.stage)
     return (rec.amount_usd or 0) >= min_unlabeled_usd
 
 
-def _deal_type(item: dict, headline: str) -> str:
+# News that mentions money but isn't a startup raising, listing or being acquired.
+_NOT_A_DEAL = re.compile(r"rights issue|block deals?|bulk deals?|offloads?|"
+                         r"stake sale|sells .*stake|first close|final close|"
+                         r"\bfund\s+(?:[ivx]+|\d+)\b|launches .*\bfund\b", re.I)
+# Categories that are deals; anything else a source labels (exit, layoffs...) is not.
+_DEAL_CATEGORIES = re.compile(r"fund|invest|round|acqui|merger|m\s*&\s*a|ipo|listing", re.I)
+_PRE_IPO = re.compile(r"pre[-\s]?ipo", re.I)
+_IPO_TYPE = re.compile(r"\bipo\b|listing", re.I)
+_IPO_HEADLINE = re.compile(r"\bipo\b|\bdrhp\b|\brhp\b|lists on|listing|market debut|"
+                           r"makes .*debut", re.I)
+
+
+def _deal_type(item: dict, headline: str) -> Optional[str]:
+    """FUNDING, MNA, IPO, or None when the item isn't a deal we track."""
     kind = str(_pick(item, "deal_type") or "")
     if _MNA_TYPE.search(kind) or _pick(item, "acquirer"):
         return MNA
+    pre_ipo = _PRE_IPO.search(kind) or _PRE_IPO.search(headline or "")
+    if not pre_ipo and (_IPO_TYPE.search(kind) or _IPO_TYPE.search(str(_pick(item, "stage") or ""))):
+        return IPO
+    if kind and not _DEAL_CATEGORIES.search(kind):
+        return None
+    if headline and not pre_ipo and _IPO_HEADLINE.search(headline):
+        return IPO
+    if headline and _NOT_A_DEAL.search(headline):
+        return None
     if headline and _MNA_HEADLINE.search(headline) and not _FUNDING_HEADLINE.search(headline):
         return MNA
     return FUNDING
@@ -240,6 +274,8 @@ def normalize_item(item: dict) -> Optional[FundingRecord]:
 
     headline = str(_pick(item, "headline") or "")
     deal_type = _deal_type(item, headline)
+    if deal_type is None:
+        return None
     company = _pick(item, "company")
     acquirer = str(_pick(item, "acquirer") or "")
     if deal_type == MNA and headline and not (company and acquirer):
@@ -249,10 +285,16 @@ def normalize_item(item: dict) -> Optional[FundingRecord]:
             acquirer = acquirer or _clean_name(m.group("acq"))
     if not company and headline and (m := _RAISES.search(headline)):
         company = _clean_name(m.group("company"))
+    if deal_type == IPO:  # "AceVector’s IPO", "EverBrands files DRHP..." -> company
+        company = _IPO_TAIL.sub("", str(company or headline)).strip()
     if not company:
         return None
     if headline:  # news feeds often keep the descriptor: "Enterprise AI Startup Ema"
         company = _clean_name(str(company)) or company
+        # Feeds Title-case names ("Nse"); keep the headline's casing when it's there.
+        at = headline.lower().find(str(company).lower())
+        if at >= 0:
+            company = headline[at:at + len(str(company))]
 
     amount = _pick(item, "amount")
     if isinstance(amount, (int, float)) and item.get("_amount_multiplier"):
@@ -269,9 +311,14 @@ def normalize_item(item: dict) -> Optional[FundingRecord]:
         tracxn_url, url = tracxn_url or url, ""
     if deal_type == FUNDING and not (_pick(item, "stage") or amount or item.get("fundingSummary")):
         return None  # general news (leadership, regulation...), not a deal
+    round_date = parse_date(_pick(item, "round_date"))
+    # Post date = when the article/announcement was published; for news items
+    # without a separate publish field, that is the item's own date.
+    post_date = parse_date(_pick(item, "post_date")) or (round_date if headline else None)
     return FundingRecord(
         company=str(company).strip(),
-        round_date=parse_date(_pick(item, "round_date")),
+        round_date=round_date,
+        post_date=post_date,
         amount_usd=parse_amount(amount),
         stage=str(_pick(item, "stage") or "").strip() if deal_type == FUNDING else "",
         investors=parse_investors(investors),

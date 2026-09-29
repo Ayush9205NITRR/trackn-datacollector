@@ -7,7 +7,7 @@ from pathlib import Path
 from collector import apify, leaders, sources
 from collector.normalize import (employee_band, is_series_a_plus, normalize, parse_amount,
                                  parse_date, parse_funding_summary)
-from collector.schema import MNA, company_ident, fiscal_quarter
+from collector.schema import IPO, MNA, company_ident, fiscal_quarter
 
 FIXTURE = Path(__file__).parent / "fixtures" / "sample_apify.json"
 FY27_H1 = (date(2026, 4, 1), date(2026, 9, 30))
@@ -105,9 +105,20 @@ class PipelineTest(unittest.TestCase):
     def test_keeps_only_series_a_plus_and_mna_in_period_and_country(self):
         self.assertEqual(sorted(self.by_name), sorted([
             "Acme Robotics Pvt Ltd", "Byte Pay", "Cloudnest", "PayZen", "Blinkit", "Lernify",
-            "Simaai"]))
+            "Simaai", "EverBrands", "NSE", "Balwaan Krishi"]))
         # Seed (Byte Pay's), Pre-Series A (Kiddo), pre-FY (Old News), US (Globex),
-        # non-deal news (Swiggy CFO) and failed scrapes are all dropped.
+        # non-deal news (Swiggy CFO), stake sales (Mastercard), rights issues (Ola),
+        # VC fund closes (WEH Ventures) and failed scrapes are all dropped.
+
+    def test_ipos_and_post_dates(self):
+        ever, nse = self.by_name["EverBrands"], self.by_name["NSE"]
+        self.assertEqual((ever.deal_type, ever.amount_usd), (IPO, 72.29e6))
+        self.assertEqual(ever.post_date, date(2026, 9, 29))
+        self.assertEqual(ever.source_url, "https://entrackr.com/news/everbrands")
+        self.assertEqual(nse.deal_type, IPO)
+        self.assertIsNone(nse.amount_usd)  # "list at Rs 1,800" is a share price, not a size
+        # RSS-style date from Inc42 becomes the post date
+        self.assertEqual(self.by_name["Balwaan Krishi"].post_date, date(2026, 9, 28))
 
     def test_merges_same_deal_from_two_sources(self):
         acme = self.by_name["Acme Robotics Pvt Ltd"]
@@ -132,16 +143,22 @@ class PipelineTest(unittest.TestCase):
         self.assertEqual(label, "FY27 Q1–Q2")
         rows = leaders.rank(self.records, start, end)
         self.assertEqual([r["company"] for r in rows],
-                         ["Simaai", "Cloudnest", "Acme Robotics Pvt Ltd", "PayZen", "Byte Pay"])
+                         ["Simaai", "Cloudnest", "Acme Robotics Pvt Ltd", "PayZen", "Byte Pay",
+                          "Balwaan Krishi"])
         acme = rows[2]
         self.assertEqual((acme["employee_band"], acme["stage"], acme["last_amount_usd"]),
                          ("51-200", "Series B", 40e6))
         self.assertEqual(acme["backed_by"], ["Sequoia", "Accel", "Y Combinator"])
         deals = leaders.mna(self.records, start, end)
         self.assertEqual([d.company for d in deals], ["Lernify", "Blinkit"])
-        md = leaders.to_markdown(rows, label, deals)
+        ipo_deals = leaders.ipos(self.records, start, end)
+        self.assertEqual([d.company for d in ipo_deals], ["EverBrands", "NSE"])
+        md = leaders.to_markdown(rows, label, deals, ipo_deals)
         self.assertIn("## M&A — FY27 Q1–Q2", md)
         self.assertIn("| Blinkit | Zomato | $568.0M |", md)
+        self.assertIn("## IPOs — FY27 Q1–Q2", md)
+        self.assertIn("| 2026-09-29 | EverBrands | $72.3M | 2026-09-29 | "
+                      "[entrackr](https://entrackr.com/news/everbrands) |", md)
 
     def test_periods(self):
         today = date(2026, 9, 29)

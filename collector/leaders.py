@@ -6,7 +6,7 @@ FY27 Q1 = Apr–Jun 2026, Q2 = Jul–Sep, Q3 = Oct–Dec, Q4 = Jan–Mar.
 
 from datetime import date, timedelta
 
-from .schema import FUNDING, MNA, fiscal_quarter
+from .schema import FUNDING, IPO, MNA, fiscal_quarter
 
 PERIODS = ("last-month", "last-quarter", "fy-to-date")
 
@@ -76,13 +76,23 @@ def rank(records: list, start: date, end: date, top: int = 25) -> list:
             "raised_in_period_usd": e["raised"],
             "backed_by": e["investors"],
             "tracxn_url": latest.tracxn_url,
+            "round_date": latest.round_date,
+            "post_date": latest.post_date,
         })
     return rows
 
 
-def mna(records: list, start: date, end: date) -> list:
-    deals = [r for r in records if r.deal_type == MNA and _in_period(r, start, end)]
+def deals_of(records: list, start: date, end: date, deal_type: str) -> list:
+    deals = [r for r in records if r.deal_type == deal_type and _in_period(r, start, end)]
     return sorted(deals, key=lambda r: r.round_date, reverse=True)
+
+
+def mna(records: list, start: date, end: date) -> list:
+    return deals_of(records, start, end, MNA)
+
+
+def ipos(records: list, start: date, end: date) -> list:
+    return deals_of(records, start, end, IPO)
 
 
 def to_airtable(rows: list, label: str) -> list:
@@ -97,6 +107,8 @@ def to_airtable(rows: list, label: str) -> list:
             "Funding Stage": r["stage"],
             "Last Funding Amount (USD)": r["last_amount_usd"],
             "Raised In Period (USD)": r["raised_in_period_usd"],
+            "Last Funding Date": _iso(r.get("round_date")),
+            "Post Date": _iso(r.get("post_date")),
             "Backed By": ", ".join(r["backed_by"]),
             "Tracxn URL": r["tracxn_url"] or None,
         }
@@ -113,21 +125,40 @@ def _money(v) -> str:
     return f"${v:,.0f}"
 
 
-def to_markdown(rows: list, label: str, deals: list = ()) -> str:
+def _iso(d):
+    return d.isoformat() if d else None
+
+
+def _link(d) -> str:
+    return f"[{d.source or 'link'}]({d.source_url})" if d.source_url else (d.source or "—")
+
+
+def to_markdown(rows: list, label: str, deals: list = (), ipo_deals: list = ()) -> str:
     lines = [f"## Top funded companies — {label}", "",
-             "| # | Company | Employee band | Stage | Last round | Raised in period | Backed by |",
-             "|---|---|---|---|---|---|---|"]
+             "| # | Company | Employee band | Stage | Last round | Raised in period | Backed by "
+             "| Round date | Post date |",
+             "|---|---|---|---|---|---|---|---|---|"]
     for r in rows:
         lines.append(
             f"| {r['rank']} | {r['company']} | {r['employee_band'] or '—'} | "
             f"{r['stage'] or '—'} | {_money(r['last_amount_usd'])} | "
-            f"{_money(r['raised_in_period_usd'])} | {', '.join(r['backed_by']) or '—'} |")
+            f"{_money(r['raised_in_period_usd'])} | {', '.join(r['backed_by']) or '—'} | "
+            f"{_iso(r.get('round_date')) or '—'} | {_iso(r.get('post_date')) or '—'} |")
     if deals:
         lines += ["", f"## M&A — {label}", "",
-                  "| Date | Company | Acquirer | Amount | Employee band | Source |",
-                  "|---|---|---|---|---|---|"]
+                  "| Date | Company | Acquirer | Amount | Employee band | Post date | Source |",
+                  "|---|---|---|---|---|---|---|"]
         for d in deals:
             lines.append(
                 f"| {d.round_date.isoformat()} | {d.company} | {d.acquirer or '—'} | "
-                f"{_money(d.amount_usd)} | {d.employee_band or '—'} | {d.source or '—'} |")
+                f"{_money(d.amount_usd)} | {d.employee_band or '—'} | "
+                f"{_iso(d.post_date) or '—'} | {_link(d)} |")
+    if ipo_deals:
+        lines += ["", f"## IPOs — {label}", "",
+                  "| Date | Company | Issue size | Post date | Source |",
+                  "|---|---|---|---|---|"]
+        for d in ipo_deals:
+            lines.append(
+                f"| {d.round_date.isoformat()} | {d.company} | {_money(d.amount_usd)} | "
+                f"{_iso(d.post_date) or '—'} | {_link(d)} |")
     return "\n".join(lines) + "\n"

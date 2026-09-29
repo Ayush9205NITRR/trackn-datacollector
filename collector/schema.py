@@ -10,6 +10,7 @@ LEADERS_TABLE = "Monthly Leaders"
 
 FUNDING = "Funding"
 MNA = "M&A"
+IPO = "IPO"
 
 _CURRENCY = {"precision": 0, "symbol": "$"}
 _ISO_DATE = {"dateFormat": {"name": "iso"}}
@@ -28,6 +29,7 @@ FUNDING_FIELDS = [
     {"name": "Funding Stage", "type": "singleLineText"},
     {"name": "Last Funding Amount (USD)", "type": "currency", "options": _CURRENCY},
     {"name": "Last Funding Date", "type": "date", "options": _ISO_DATE},
+    {"name": "Post Date", "type": "date", "options": _ISO_DATE},
     {"name": "Backed By", "type": "multilineText"},
     {"name": "Acquirer", "type": "singleLineText"},
     {"name": "Total Funding (USD)", "type": "currency", "options": _CURRENCY},
@@ -47,6 +49,8 @@ LEADERS_FIELDS = [
     {"name": "Funding Stage", "type": "singleLineText"},
     {"name": "Last Funding Amount (USD)", "type": "currency", "options": _CURRENCY},
     {"name": "Raised In Period (USD)", "type": "currency", "options": _CURRENCY},
+    {"name": "Last Funding Date", "type": "date", "options": _ISO_DATE},
+    {"name": "Post Date", "type": "date", "options": _ISO_DATE},
     {"name": "Backed By", "type": "multilineText"},
     {"name": "Tracxn URL", "type": "url"},
 ]
@@ -86,6 +90,7 @@ class FundingRecord:
     country: str = ""
     source: str = ""
     source_url: str = ""
+    post_date: Optional[date] = None  # when the news article / announcement was published
 
     @property
     def ident(self) -> str:
@@ -95,7 +100,7 @@ class FundingRecord:
     def key(self) -> str:
         """Same deal reported by different sources → same key (month granularity,
         since news and databases often disagree on the exact day)."""
-        what = self.stage.strip().lower() if self.deal_type == FUNDING else "m&a"
+        what = self.stage.strip().lower() if self.deal_type == FUNDING else self.deal_type.lower()
         return f"{self.ident}|{what}|{self.month or 'unknown'}"
 
     @property
@@ -116,6 +121,8 @@ class FundingRecord:
             elif f.name == "source":
                 parts = [p for p in (mine, theirs) if p]
                 values[f.name] = ", ".join(dict.fromkeys(", ".join(parts).split(", ")))
+            elif f.name == "post_date":  # first time the deal was reported
+                values[f.name] = min((d for d in (mine, theirs) if d), default=None)
             else:
                 values[f.name] = mine if mine not in (None, "") else theirs
         return FundingRecord(**values)
@@ -134,6 +141,7 @@ class FundingRecord:
             "Funding Stage": self.stage,
             "Last Funding Amount (USD)": self.amount_usd,
             "Last Funding Date": self.round_date.isoformat() if self.round_date else None,
+            "Post Date": self.post_date.isoformat() if self.post_date else None,
             "Backed By": ", ".join(self.investors),
             "Acquirer": self.acquirer,
             "Total Funding (USD)": self.total_funding_usd,
@@ -148,4 +156,5 @@ class FundingRecord:
     def to_dict(self) -> dict:
         d = asdict(self)
         d["round_date"] = self.round_date.isoformat() if self.round_date else None
+        d["post_date"] = self.post_date.isoformat() if self.post_date else None
         return d

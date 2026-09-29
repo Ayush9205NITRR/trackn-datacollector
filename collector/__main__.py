@@ -24,9 +24,9 @@ import sys
 from datetime import date
 from pathlib import Path
 
-from . import airtable, leaders, sources
+from . import airtable, apify, leaders, sources
 from .normalize import normalize, parse_date
-from .schema import (FUNDING_FIELDS, FUNDING_TABLE, LEADERS_FIELDS, LEADERS_TABLE, MNA,
+from .schema import (FUNDING_FIELDS, FUNDING_TABLE, IPO, LEADERS_FIELDS, LEADERS_TABLE, MNA,
                      FundingRecord)
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -70,7 +70,8 @@ def _load_snapshot() -> list:
     if not SNAPSHOT.exists():
         sys.exit(f"no snapshot at {SNAPSHOT}; run `python -m collector sync` first")
     rows = json.loads(SNAPSHOT.read_text())
-    return [FundingRecord(**{**r, "round_date": parse_date(r["round_date"])}) for r in rows]
+    return [FundingRecord(**{**r, "round_date": parse_date(r["round_date"]),
+                             "post_date": parse_date(r.get("post_date"))}) for r in rows]
 
 
 def cmd_setup(args):
@@ -115,8 +116,9 @@ def cmd_sync(args):
     SNAPSHOT.parent.mkdir(exist_ok=True)
     SNAPSHOT.write_text(json.dumps([r.to_dict() for r in records], indent=2) + "\n")
     n_mna = sum(r.deal_type == MNA for r in records)
-    print(f"{len(records)} deals ({len(records) - n_mna} funding, {n_mna} M&A) "
-          f"saved to {SNAPSHOT.relative_to(ROOT)}")
+    n_ipo = sum(r.deal_type == IPO for r in records)
+    print(f"{len(records)} deals ({len(records) - n_mna - n_ipo} funding, {n_mna} M&A, "
+          f"{n_ipo} IPO) saved to {SNAPSHOT.relative_to(ROOT)}")
 
     leader_rows = _write_reports(records, today, args.top)
 
@@ -141,10 +143,12 @@ def _write_reports(records, today, top) -> list:
     for period in leaders.PERIODS:
         label, start, end = leaders.period_bounds(period, today)
         rows, deals = leaders.rank(records, start, end, top), leaders.mna(records, start, end)
+        ipo_deals = leaders.ipos(records, start, end)
         name = f"leaders_{label.replace(' ', '_')}.md"
-        (REPORTS / name).write_text(leaders.to_markdown(rows, label, deals))
+        (REPORTS / name).write_text(leaders.to_markdown(rows, label, deals, ipo_deals))
         airtable_rows += leaders.to_airtable(rows, label)
-        print(f"report: reports/{name} ({len(rows)} funded companies, {len(deals)} M&A)")
+        print(f"report: reports/{name} ({len(rows)} funded companies, {len(deals)} M&A, "
+              f"{len(ipo_deals)} IPOs)")
     return airtable_rows
 
 
@@ -157,7 +161,17 @@ def cmd_leaders(args):
     else:
         label, start, end = leaders.period_bounds(args.period, today)
     rows, deals = leaders.rank(records, start, end, args.top), leaders.mna(records, start, end)
-    print(leaders.to_markdown(rows, label, deals))
+    print(leaders.to_markdown(rows, label, deals, leaders.ipos(records, start, end)))
+
+
+def cmd_inspect(args):
+    token = _env("APIFY_TOKEN")
+    for source in json.loads(Path(args.sources).read_text()):
+        try:
+            print(apify.describe_actor(token, source["actor"]))
+        except Exception as exc:  # noqa: BLE001 - report and continue with the next actor
+            print(f"=== {source['actor']}\n  could not inspect: {exc}")
+        print()
 
 
 def main(argv=None):
@@ -187,6 +201,10 @@ def main(argv=None):
     s.add_argument("--as-of", help="YYYY-MM-DD; default today")
     s.add_argument("--top", type=int, default=25)
     s.set_defaults(func=cmd_leaders)
+
+    s = sub.add_parser("inspect", help="print each source actor's input schema and last run log")
+    s.add_argument("--sources", default=str(ROOT / "sources.json"))
+    s.set_defaults(func=cmd_inspect)
 
     args = p.parse_args(argv)
     try:

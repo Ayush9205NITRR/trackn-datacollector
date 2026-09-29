@@ -4,6 +4,12 @@ import urllib.error
 import urllib.request
 
 
+def request_text(url: str, token: str, timeout=60) -> str:
+    req = urllib.request.Request(url, headers={"Authorization": f"Bearer {token}"})
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+        return resp.read().decode(errors="replace")
+
+
 def request_json(method: str, url: str, token: str, body=None, timeout=300, retries=4):
     """JSON request with bearer auth; retries on 429/5xx with exponential backoff."""
     data = json.dumps(body).encode() if body is not None else None

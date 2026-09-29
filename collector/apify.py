@@ -1,9 +1,10 @@
 """Run the automation-lab Tracxn scraper on Apify and fetch its dataset items."""
 
+import json
 import time
 import urllib.parse
 
-from .http import request_json
+from .http import request_json, request_text
 
 API = "https://api.apify.com/v2"
 DEFAULT_ACTOR = "automation-lab/tracxn-company-intelligence-scraper"
@@ -45,6 +46,37 @@ def run_actor(token: str, actor_id: str, actor_input: dict,
     if run["status"] != "SUCCEEDED":
         raise RuntimeError(f"Apify run {run_id} ended with status {run['status']}")
     return fetch_dataset(token, run["defaultDatasetId"])
+
+
+def describe_actor(token: str, actor_id: str, log_lines: int = 25) -> str:
+    """Input schema (field names, types, allowed values) and the tail of our last run's
+    log, to line sources.json up with what the actor really accepts."""
+    actor = urllib.parse.quote(actor_id.replace("/", "~"), safe="~")
+    out = [f"=== {actor_id}"]
+    info = request_json("GET", f"{API}/acts/{actor}", token)["data"]
+    build_id = (info.get("taggedBuilds") or {}).get("latest", {}).get("buildId")
+    schema = {}
+    if build_id:
+        build = request_json("GET", f"{API}/actor-builds/{build_id}", token)["data"]
+        raw = build.get("inputSchema") or (build.get("actorDefinition") or {}).get("input")
+        schema = json.loads(raw) if isinstance(raw, str) else (raw or {})
+    required = set(schema.get("required", []))
+    for name, prop in (schema.get("properties") or {}).items():
+        details = [prop.get("type", "?")]
+        for key in ("enum", "default", "prefill", "minimum", "maximum"):
+            if key in prop:
+                details.append(f"{key}={json.dumps(prop[key])[:200]}")
+        flag = " (required)" if name in required else ""
+        out.append(f"  {name}{flag}: {', '.join(details)} — {prop.get('title', '')}")
+        if prop.get("description"):
+            out.append(f"      {prop['description'][:200]}")
+    runs = request_json("GET", f"{API}/acts/{actor}/runs?desc=1&limit=1", token)["data"]["items"]
+    if runs:
+        run = runs[0]
+        out.append(f"  last run {run['id']}: {run['status']}, started {run.get('startedAt')}")
+        log = request_text(f"{API}/logs/{run['id']}", token).splitlines()
+        out += [f"    | {line}" for line in log[-log_lines:]]
+    return "\n".join(out)
 
 
 def fetch_dataset(token: str, dataset_id: str, page_size: int = 1000) -> list:
