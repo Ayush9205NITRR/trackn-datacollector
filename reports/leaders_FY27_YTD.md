@@ -2,7 +2,7 @@
 
 | # | Company | Employee band | Stage | Last round | Raised in period | Backed by | Round date | Post date |
 |---|---|---|---|---|---|---|---|---|
-| 1 | Simaai | — | Series C | $150.0M | $150.0M | — | 2026-09-28 | 2026-09-28 |
+| 1 | SiMa.ai | — | Series C | $150.0M | $150.0M | — | 2026-09-28 | 2026-09-28 |
 | 2 | Ultraviolette | — | — | $85.0M | $85.0M | — | 2026-09-23 | 2026-09-23 |
 | 3 | Ema | — | Series B | $77.0M | $77.0M | Creaegis | 2026-09-24 | 2026-09-24 |
 | 4 | Balwaan Krishi | — | Series B | $12.0M | $12.0M | First | 2026-09-28 | 2026-09-28 |
