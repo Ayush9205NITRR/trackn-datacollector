@@ -1,0 +1,16 @@
+[
+  {"companyName": "Acme Robotics", "website": "acmerobotics.ai", "employeeCount": "51-200",
+   "latestFundingRound": "Series B", "latestFundingAmount": "$40M",
+   "latestFundingDate": "2026-08-12", "investors": [{"name": "Sequoia"}, {"name": "Accel"}],
+   "totalFunding": "$62.5M", "tracxnUrl": "https://tracxn.com/d/companies/acme-robotics"},
+  {"companyName": "Byte Pay", "domain": "bytepay.in", "employees": 35,
+   "fundingStage": "Series A", "amount": "USD 12.5 Mn", "date": "Aug 20, 2026",
+   "backedBy": "Elevation Capital, Blume Ventures"},
+  {"companyName": "Byte Pay", "domain": "bytepay.in", "employees": 35,
+   "fundingStage": "Seed", "amount": "3M", "date": "2026-07-02", "backedBy": "Blume Ventures"},
+  {"companyName": "Cloudnest", "employeeCount": 1200, "stage": "Series D",
+   "amount": 150000000, "roundDate": "2026-05-30", "investors": "Tiger Global; SoftBank"},
+  {"companyName": "Old News", "stage": "Series A", "amount": "$5M", "roundDate": "2025-11-01"},
+  {"companyName": "Quiet Co", "stage": "Seed", "amount": "undisclosed",
+   "roundDate": "2026-08-03", "investors": ["Angel Syndicate"]}
+]

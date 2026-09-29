@@ -1,0 +1,38 @@
+name: Tracxn sync
+
+on:
+  schedule:
+    - cron: "17 3 * * 1"   # every Monday 03:17 UTC
+  workflow_dispatch:
+    inputs:
+      since:
+        description: "Start date (YYYY-MM-DD), default START_DATE / Jan 1"
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m unittest discover -s tests -t .
+      - name: Sync Tracxn -> Airtable
+        env:
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+          APIFY_ACTOR_ID: ${{ vars.APIFY_ACTOR_ID }}
+          AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
+          AIRTABLE_BASE_ID: ${{ vars.AIRTABLE_BASE_ID }}
+          START_DATE: ${{ vars.START_DATE }}
+        run: python -m collector sync ${{ inputs.since && format('--since {0}', inputs.since) || '' }}
+      - name: Commit snapshot and reports
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data reports
+          git diff --cached --quiet || git commit -m "Tracxn sync $(date -u +%F)"
+          git push
