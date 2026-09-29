@@ -68,19 +68,67 @@ def fill_primary(tables: list, ref: str, rows: list, value_from: str = "Company"
     return [{primary: r.get(value_from, ""), **r} for r in rows]
 
 
+def _rejected(exc: Exception) -> bool:
+    return any(f"-> {code}" in str(exc) for code in (403, 422))
+
+
 def upsert(token: str, base_id: str, table: str, rows: list,
            merge_on: str = "Record Key") -> int:
-    """Upsert rows (dicts of field values) keyed on `merge_on`."""
+    """Upsert rows (dicts of field values) keyed on `merge_on`.
+
+    If Airtable rejects a batch (403/422), find the column it objects to by
+    retrying one field at a time, report it, and upload the rows without it —
+    one bad column shouldn't block the whole table. Raises if even the bare
+    rows are rejected (a real permission problem).
+    """
     url = f"{API}/{base_id}/{urllib.parse.quote(table)}"
-    for i in range(0, len(rows), BATCH):
+    skip = set()
+
+    def send(batch):
         body = {
             "performUpsert": {"fieldsToMergeOn": [merge_on]},
-            "records": [{"fields": r} for r in rows[i:i + BATCH]],
+            "records": [{"fields": {k: v for k, v in r.items() if k not in skip}}
+                        for r in batch],
             "typecast": True,
         }
         request_json("PATCH", url, token, body)
         time.sleep(0.25)  # stay under 5 requests/second per base
+
+    for i in range(0, len(rows), BATCH):
+        batch = rows[i:i + BATCH]
+        try:
+            send(batch)
+        except RuntimeError as exc:
+            if not _rejected(exc):
+                raise
+            bad = _find_bad_field(send, batch[0], merge_on, skip)
+            if bad is None:
+                raise
+            print(f"WARNING: Airtable rejects column {bad!r} in '{table}' "
+                  f"({str(exc)[:160]}); uploading without it")
+            skip.add(bad)
+            send(batch)
     return len(rows)
+
+
+def _find_bad_field(send, row: dict, merge_on: str, skip: set):
+    """Send the row with only the merge key, then add one field at a time; the
+    first field that turns an accepted write into a rejection is the culprit."""
+    fields = [k for k in row if k != merge_on and k not in skip]
+    try:
+        send([{merge_on: row[merge_on]}])
+    except RuntimeError as exc:
+        if _rejected(exc):
+            return None  # even the key alone is refused: not a column problem
+        raise
+    for name in fields:
+        try:
+            send([{merge_on: row[merge_on], name: row[name]}])
+        except RuntimeError as exc:
+            if _rejected(exc):
+                return name
+            raise
+    return None
 
 
 def prune(token: str, base_id: str, table: str, keep: set, key_field: str = "Record Key") -> int:

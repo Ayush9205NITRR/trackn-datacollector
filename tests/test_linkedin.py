@@ -18,6 +18,27 @@ class PickTest(unittest.TestCase):
         self.assertEqual(hit["url"], "https://www.linkedin.com/company/sima-ai")
         self.assertEqual(hit["employee_band"], "201-500")
 
+    def test_short_names_need_a_slug_match(self):
+        # Seen live: "EMA - Escola do Meio Ambiente" matched "Ema" on title alone.
+        wrong = [{"url": "https://br.linkedin.com/company/escoladomeioambiente",
+                  "title": "EMA - Escola do Meio Ambiente | LinkedIn"}]
+        self.assertEqual(linkedin.pick("Ema", wrong), {})
+        right = [{"url": "https://www.linkedin.com/company/ema-unlimited", "title": "Ema"}]
+        self.assertEqual(linkedin.pick("Ema", right)["url"],
+                         "https://www.linkedin.com/company/ema-unlimited")
+
+    def test_prefers_the_indian_page(self):
+        results = [
+            {"url": "https://www.linkedin.com/company/everbrands-inc",
+             "title": "EverBrands Inc | LinkedIn", "description": "Los Angeles, CA. 11-50 employees"},
+            {"url": "https://in.linkedin.com/company/everbrands-india",
+             "title": "EverBrands India | LinkedIn",
+             "description": "Subway India operator. Mumbai. 1,001-5,000 employees"},
+        ]
+        hit = linkedin.pick("EverBrands", results)
+        self.assertEqual(hit["url"], "https://www.linkedin.com/company/everbrands-india")
+        self.assertEqual(hit["employee_band"], "1001-5000")
+
     def test_no_match_returns_empty(self):
         self.assertEqual(linkedin.pick("Ema", SIMA_RESULTS), {})
         posts = [{"url": "https://www.linkedin.com/posts/ema-raises", "title": "Ema raises"}]

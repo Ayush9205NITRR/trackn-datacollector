@@ -38,26 +38,41 @@ def size_from_snippet(text: str) -> str:
     return employee_band((m.group(1) or m.group(2)).replace("–", "-")) if m else ""
 
 
+_INDIA = re.compile(r"\bindia|bengaluru|bangalore|mumbai|delhi|gurugram|gurgaon|noida|"
+                    r"hyderabad|chennai|pune|kolkata|ahmedabad|jaipur|kochi|chandigarh|"
+                    r"indore|\bpvt\b|private limited", re.I)
+
+
 def _matches(company: str, url: str, title: str) -> bool:
     """Does this LinkedIn result belong to `company`? Compare normalized names with
-    the page title ('SiMa.ai | LinkedIn') and the URL slug ('sima-ai')."""
+    the URL slug ('sima-ai') and the page title ('SiMa.ai | LinkedIn'). Short names
+    ('Ema') must match the slug: a title match alone is too loose for them."""
     want = company_ident(company)
     if len(want) < 2:
         return False
-    slug = company_ident(_LINKEDIN_URL.search(url).group(1).replace("-", " "))
+    raw_slug = _LINKEDIN_URL.search(url).group(1)
+    slug = company_ident(raw_slug.replace("-", " "))
     page = company_ident(re.split(r"\s[|\-–:]\s", title or "")[0])
-    return want in (slug, page) or (len(want) >= 4 and (slug.startswith(want) or
-                                                        page.startswith(want)))
+    first_word = company_ident(re.split(r"[-_]", raw_slug)[0])
+    if slug == want or first_word == want or (len(want) >= 4 and slug.startswith(want)):
+        return True
+    return len(want) >= 5 and (page == want or page.startswith(want))
 
 
 def pick(company: str, results: list) -> dict:
-    """From Google organic results, the matching LinkedIn company page, if any."""
+    """From Google organic results, the matching LinkedIn company page, if any.
+    Among matches, one that mentions India (or an Indian city) wins."""
+    matches = []
     for r in results:
         url = r.get("url") or r.get("link") or ""
         if _LINKEDIN_URL.search(url) and _matches(company, url, r.get("title", "")):
-            return {"url": canonical(url),
-                    "employee_band": size_from_snippet(r.get("description") or r.get("snippet"))}
-    return {}
+            matches.append(r)
+    if not matches:
+        return {}
+    text = lambda r: f"{r.get('title', '')} {r.get('description') or r.get('snippet') or ''}"
+    best = next((r for r in matches if _INDIA.search(text(r))), matches[0])
+    return {"url": canonical(best.get("url") or best.get("link")),
+            "employee_band": size_from_snippet(best.get("description") or best.get("snippet"))}
 
 
 def from_website(domain: str, timeout: int = 10) -> str:
@@ -76,10 +91,13 @@ def from_website(domain: str, timeout: int = 10) -> str:
 
 def google_search(token: str, names: list, actor: str = GOOGLE_ACTOR) -> dict:
     """One actor run for all names. Returns {name: organic results}."""
-    queries = {f'"{n}" site:linkedin.com/company': n for n in names}
+    queries = {f'"{n}" India site:linkedin.com/company': n for n in names}
+    # Default google.com: country domains (google.co.in) return goto-redirect links
+    # the actor often fails to resolve, which hides the real LinkedIn URLs.
     pages = apify.run_actor(token, actor, {
-        "queries": "\n".join(queries), "maxPagesPerQuery": 1, "resultsPerPage": 10,
-        "countryCode": "in", "saveHtml": False, "includeUnfilteredResults": False})
+        "queries": "\n".join(queries), "maxPagesPerQuery": 1,
+        "saveHtml": False, "saveHtmlToKeyValueStore": False,
+        "includeUnfilteredResults": False})
     out = {}
     for page in pages:
         term = (page.get("searchQuery") or {}).get("term", "")
@@ -113,7 +131,7 @@ def enrich(records: list, cache: dict, token: str = "", today: date = None,
     today = today or date.today()
     todo = {}
     for rec in records:
-        if not rec.linkedin_url and _due(cache.get(rec.ident), today):
+        if _due(cache.get(rec.ident), today):
             todo.setdefault(rec.ident, rec)
     stats = {"website": 0, "google": 0, "missed": 0}
 
@@ -138,8 +156,11 @@ def enrich(records: list, cache: dict, token: str = "", today: date = None,
                                 "via": "google", "checked": today.isoformat()}
                 stats["google" if hit else "missed"] += 1
 
+    # The cache is the source of truth for looked-up companies, so a corrected
+    # entry in data/linkedin.json replaces whatever an earlier run saved.
     for rec in records:
-        entry = cache.get(rec.ident) or {}
-        rec.linkedin_url = rec.linkedin_url or entry.get("url", "")
-        rec.employee_band = rec.employee_band or entry.get("employee_band", "")
+        entry = cache.get(rec.ident)
+        if entry is not None:
+            rec.linkedin_url = entry.get("url", "")
+        rec.employee_band = rec.employee_band or (entry or {}).get("employee_band", "")
     return stats

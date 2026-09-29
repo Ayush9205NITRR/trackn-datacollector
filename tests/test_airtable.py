@@ -49,6 +49,29 @@ class FillPrimaryTest(unittest.TestCase):
         self.assertEqual(airtable.fill_primary(computed, "tblyAvdZRaCCgLP94", rows), rows)
 
 
+class UpsertTest(unittest.TestCase):
+    @mock.patch("collector.airtable.time.sleep")
+    @mock.patch("collector.airtable.request_json")
+    def test_skips_a_rejected_column_and_uploads_the_rest(self, req, _sleep):
+        def fake(method, url, token, body):
+            if any("LinkedIn URL" in r["fields"] for r in body["records"]):
+                raise RuntimeError(f"PATCH {url} -> 403: INVALID_PERMISSIONS")
+        req.side_effect = fake
+        rows = [{"Record Key": "a", "Company": "A", "LinkedIn URL": "https://x"},
+                {"Record Key": "b", "Company": "B"}]
+        self.assertEqual(airtable.upsert("t", "appX", "tblY", rows), 2)
+        last = req.call_args_list[-1].args[3]["records"]
+        self.assertEqual(last, [{"fields": {"Record Key": "a", "Company": "A"}},
+                                {"fields": {"Record Key": "b", "Company": "B"}}])
+
+    @mock.patch("collector.airtable.time.sleep")
+    @mock.patch("collector.airtable.request_json")
+    def test_real_permission_error_still_raises(self, req, _sleep):
+        req.side_effect = RuntimeError("PATCH x -> 403: INVALID_PERMISSIONS")
+        with self.assertRaises(RuntimeError):
+            airtable.upsert("t", "appX", "tblY", [{"Record Key": "a", "Company": "A"}])
+
+
 class PruneTest(unittest.TestCase):
     @mock.patch("collector.airtable.time.sleep")
     @mock.patch("collector.airtable.request_json")
