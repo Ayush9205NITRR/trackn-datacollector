@@ -1,9 +1,0 @@
-{
-  "startUrls": [
-    { "url": "https://tracxn.com/d/funding-rounds" }
-  ],
-  "fundingDateFrom": "{since}",
-  "fundingDateTo": "{until}",
-  "includeInvestors": true,
-  "maxItems": 5000
-}

@@ -61,8 +61,13 @@ class FundingRecord:
     total_funding_usd: Optional[float] = None
 
     @property
+    def ident(self) -> str:
+        """Stable company identity: Tracxn profile URL, else domain, else name."""
+        return (self.tracxn_url or self.domain or self.company).strip().lower()
+
+    @property
     def key(self) -> str:
-        ident = (self.domain or self.company).strip().lower()
+        ident = self.ident
         day = self.round_date.isoformat() if self.round_date else "unknown"
         return f"{ident}|{day}|{self.stage.strip().lower()}"
 

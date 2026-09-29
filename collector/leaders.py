@@ -28,8 +28,7 @@ def rank(records: list, start: date, end: date, top: int = 25) -> list:
     for rec in records:
         if rec.round_date is None or not (start <= rec.round_date <= end):
             continue
-        ident = (rec.domain or rec.company).lower()
-        entry = by_company.setdefault(ident, {"raised": 0.0, "latest": rec, "investors": []})
+        entry = by_company.setdefault(rec.ident, {"raised": 0.0, "latest": rec, "investors": []})
         entry["raised"] += rec.amount_usd or 0.0
         if rec.round_date >= entry["latest"].round_date:
             entry["latest"] = rec

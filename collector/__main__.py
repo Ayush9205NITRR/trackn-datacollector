@@ -2,8 +2,8 @@
 
 Environment:
   APIFY_TOKEN            Apify API token
-  APIFY_ACTOR_ID         Tracxn scraper actor, e.g. "username~tracxn-scraper"
-  AIRTABLE_TOKEN         Airtable personal access token
+  APIFY_ACTOR_ID         Optional; default automation-lab/tracxn-company-intelligence-scraper
+  AIRTABLE_PAT           Airtable personal access token (same secret as kylas-airtable-sync)
                          (scopes: data.records:read/write, schema.bases:read/write)
   AIRTABLE_BASE_ID       Existing base to write to (appXXXX...)
   AIRTABLE_WORKSPACE_ID  Only for `setup` when creating a brand-new base
@@ -33,6 +33,10 @@ def _env(name: str, required: bool = True) -> str:
     return value
 
 
+def _airtable_token() -> str:
+    return _env("AIRTABLE_PAT", required=False) or _env("AIRTABLE_TOKEN")
+
+
 def _start_date(arg) -> date:
     raw = arg or os.environ.get("START_DATE")
     return parse_date(raw) if raw else date(date.today().year, 1, 1)
@@ -46,7 +50,7 @@ def _load_snapshot() -> list:
 
 
 def cmd_setup(args):
-    token = _env("AIRTABLE_TOKEN")
+    token = _airtable_token()
     base_id = _env("AIRTABLE_BASE_ID", required=False)
     if base_id:
         created = airtable.ensure_tables(token, base_id)
@@ -62,14 +66,22 @@ def cmd_sync(args):
     if args.from_file:
         items = json.loads(Path(args.from_file).read_text())
     else:
-        actor_input = apify.load_input(args.input, since.isoformat(), today.isoformat())
-        items = apify.run_actor(_env("APIFY_TOKEN"), _env("APIFY_ACTOR_ID"), actor_input)
+        urls = apify.load_urls(args.urls)
+        if not urls:
+            sys.exit(f"no Tracxn company URLs in {args.urls}")
+        print(f"scraping {len(urls)} companies from {args.urls}")
+        actor = _env("APIFY_ACTOR_ID", required=False) or apify.DEFAULT_ACTOR
+        items = apify.run_actor(_env("APIFY_TOKEN"), actor, apify.build_input(urls))
     print(f"fetched {len(items)} raw items")
 
     # Merge with the previous snapshot so the research table accumulates over time.
     merged = {r.key: r for r in (_load_snapshot() if SNAPSHOT.exists() else [])}
-    for rec in normalize(items, since=since):
+    fresh = normalize(items, since=since)
+    for rec in fresh:
         merged[rec.key] = rec
+    skipped = len(items) - len(fresh)
+    if skipped:
+        print(f"{skipped} items skipped (failed scrape, or no funding round since {since})")
     records = sorted(merged.values(), key=lambda r: (r.round_date or date.min), reverse=True)
 
     SNAPSHOT.parent.mkdir(exist_ok=True)
@@ -80,7 +92,7 @@ def cmd_sync(args):
 
     if args.no_airtable:
         return
-    token, base_id = _env("AIRTABLE_TOKEN"), _env("AIRTABLE_BASE_ID")
+    token, base_id = _airtable_token(), _env("AIRTABLE_BASE_ID")
     n = airtable.upsert(token, base_id, FUNDING_TABLE, [r.to_airtable(today) for r in records])
     print(f"upserted {n} rows into '{FUNDING_TABLE}'")
     n = airtable.upsert(token, base_id, LEADERS_TABLE, leader_rows)
@@ -117,8 +129,8 @@ def main(argv=None):
 
     s = sub.add_parser("sync", help="scrape via Apify, update snapshot, reports and Airtable")
     s.add_argument("--since", help="YYYY-MM-DD; default START_DATE or Jan 1")
-    s.add_argument("--input", default=str(ROOT / "apify_input.json"),
-                   help="actor input template with {since}/{until} placeholders")
+    s.add_argument("--urls", default=str(ROOT / "companies.txt"),
+                   help="file of Tracxn company-profile URLs, one per line")
     s.add_argument("--from-file", help="use a saved Apify dataset JSON instead of running the actor")
     s.add_argument("--top", type=int, default=25)
     s.add_argument("--no-airtable", action="store_true")

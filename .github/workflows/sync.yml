@@ -24,11 +24,10 @@ jobs:
       - name: Sync Tracxn -> Airtable
         env:
           APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
-          APIFY_ACTOR_ID: ${{ vars.APIFY_ACTOR_ID }}
-          AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
-          AIRTABLE_BASE_ID: ${{ vars.AIRTABLE_BASE_ID }}
-          START_DATE: ${{ vars.START_DATE }}
-        run: python -m collector sync ${{ inputs.since && format('--since {0}', inputs.since) || '' }}
+          AIRTABLE_PAT: ${{ secrets.AIRTABLE_PAT }}
+          AIRTABLE_BASE_ID: ${{ secrets.AIRTABLE_BASE_ID }}
+          START_DATE: ${{ inputs.since || vars.START_DATE || '2026-01-01' }}
+        run: python -m collector sync
       - name: Commit snapshot and reports
         run: |
           git config user.name "github-actions[bot]"

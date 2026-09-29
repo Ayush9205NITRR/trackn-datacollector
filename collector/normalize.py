@@ -14,7 +14,8 @@ from .schema import FundingRecord
 FIELD_ALIASES = {
     "company": ["companyName", "company_name", "company", "name", "title"],
     "domain": ["domain", "website", "companyWebsite", "url_domain"],
-    "tracxn_url": ["tracxnUrl", "tracxn_url", "profileUrl", "url"],
+    "tracxn_url": ["canonicalUrl", "tracxnUrl", "tracxn_url", "profileUrl",
+                   "sourceUrl", "url"],
     "sector": ["sector", "industry", "practiceArea", "feed"],
     "location": ["location", "hq", "headquarters", "city", "country"],
     "employee_band": ["employeeCount", "employee_count", "employeeSize",
@@ -122,7 +123,44 @@ def parse_investors(value) -> list:
     return names
 
 
+_MONEY = r"\$?\s?([\d.,]+\s?(?:[KMB]n?|Mn|Bn|Cr)?)"
+_TOTAL_RE = re.compile(r"total funding of\s+" + _MONEY, re.I)
+_LATEST_RE = re.compile(
+    r"latest funding round was (?:an? )?(?P<stage>[^.]+?) round"
+    r"(?: on (?P<date>[A-Z][a-z]{2,8} \d{1,2}, \d{4}))?"
+    r"(?: for " + _MONEY.replace("(", "(?P<amount>", 1) + r")?", re.I)
+_INVESTORS_RE = re.compile(
+    r"(?:top|major|key|lead|institutional) investors? (?:are|is|include|includes)\s+(.+?)(?:\.\s|\.$|$)",
+    re.I)
+
+
+def parse_funding_summary(text) -> dict:
+    """Pull total/latest round details out of Tracxn's public funding sentence, e.g.
+    "Acme has raised a total funding of $62.5M over 3 rounds. Its latest funding
+    round was a Series B round on Aug 12, 2026 for $40M. ... Its top investors
+    are Sequoia, Accel and Blume Ventures."
+    """
+    out = {}
+    if not text:
+        return out
+    text = str(text)
+    if m := _TOTAL_RE.search(text):
+        out["totalFunding"] = m.group(1)
+    if m := _LATEST_RE.search(text):
+        out["latestFundingRound"] = m.group("stage").strip()
+        if m.group("date"):
+            out["latestFundingDate"] = m.group("date")
+        if m.group("amount"):
+            out["latestFundingAmount"] = m.group("amount")
+    if m := _INVESTORS_RE.search(text):
+        names = re.split(r",\s*|\s+and\s+", m.group(1))
+        out["investors"] = [n.strip() for n in names if n.strip() and "other" not in n.lower()]
+    return out
+
+
 def normalize_item(item: dict) -> Optional[FundingRecord]:
+    if item.get("status") not in (None, "success"):
+        return None
     company = _pick(item, "company")
     if not company:
         return None
@@ -131,6 +169,9 @@ def normalize_item(item: dict) -> Optional[FundingRecord]:
     if isinstance(latest, dict):
         item = {**item, **{f"latest{k[0].upper()}{k[1:]}": v for k, v in latest.items()},
                 **latest}
+    # Structured fields win; the summary sentence fills whatever is missing.
+    summary = parse_funding_summary(item.get("fundingSummary"))
+    item = {**summary, **{k: v for k, v in item.items() if v not in (None, "", [])}}
     return FundingRecord(
         company=str(company).strip(),
         round_date=parse_date(_pick(item, "round_date")),

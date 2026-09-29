@@ -1,12 +1,32 @@
-"""Run a Tracxn scraper actor on Apify and fetch its dataset items."""
+"""Run the automation-lab Tracxn scraper on Apify and fetch its dataset items."""
 
-import json
 import time
 import urllib.parse
 
 from .http import request_json
 
 API = "https://api.apify.com/v2"
+DEFAULT_ACTOR = "automation-lab/tracxn-company-intelligence-scraper"
+
+
+def load_urls(path: str) -> list:
+    """Read Tracxn company-profile URLs, one per line; '#' starts a comment."""
+    urls = []
+    with open(path) as f:
+        for line in f:
+            url = line.split("#", 1)[0].strip()
+            if not url:
+                continue
+            url = url.split("?", 1)[0].rstrip("/")
+            if "tracxn.com/d/companies/" not in url:
+                raise ValueError(f"not a Tracxn company-profile URL: {url}")
+            if url not in urls:
+                urls.append(url)
+    return urls
+
+
+def build_input(urls: list) -> dict:
+    return {"startUrls": [{"url": u} for u in urls]}
 
 
 def run_actor(token: str, actor_id: str, actor_input: dict,
@@ -40,10 +60,3 @@ def fetch_dataset(token: str, dataset_id: str, page_size: int = 1000) -> list:
         if len(page) < page_size:
             return items
         offset += page_size
-
-
-def load_input(path: str, since: str, until: str) -> dict:
-    """Read the actor input template and fill in {since}/{until} placeholders."""
-    with open(path) as f:
-        text = f.read()
-    return json.loads(text.replace("{since}", since).replace("{until}", until))

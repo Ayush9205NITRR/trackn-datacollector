@@ -6,60 +6,70 @@ the companies that raised the most, with their employee size band, last funding
 amount, funding stage and investors (backed by).
 
 ```
-Apify actor (Tracxn scrape) ──> normalize ──> data/funding_rounds.json ──> Airtable "Funding Rounds"
-                                                   └──> rank last month / quarter ──> reports/*.md + Airtable "Monthly Leaders"
+companies.txt (Tracxn URLs) ──> Apify: automation-lab/tracxn-company-intelligence-scraper
+    ──> normalize (parses Tracxn's funding sentence) ──> data/funding_rounds.json ──> Airtable "Funding Rounds"
+                                                            └──> rank last month / quarter ──> reports/*.md + Airtable "Monthly Leaders"
 ```
 
 Pure Python 3.9+ standard library — no packages to install.
 
 ## Setup
 
-1. **Apify**: pick a Tracxn scraper actor in the Apify Store (or your own) and note
-   its ID (`username~actor-name`). Edit `apify_input.json` so it matches that actor's
-   input schema; `{since}` and `{until}` are replaced with the date range.
-   If the actor's output field names differ from the ones expected, add them to
-   `FIELD_ALIASES` in `collector/normalize.py`.
-2. **Airtable**: create a personal access token with scopes
-   `data.records:read`, `data.records:write`, `schema.bases:read`, `schema.bases:write`
-   and access to your workspace.
-3. Create the base and tables:
+1. **Companies to track**: add Tracxn company-profile URLs to `companies.txt`, one
+   per line (copy them from the company pages on tracxn.com).
+2. **GitHub secrets** (Settings → Secrets and variables → Actions). The Airtable ones
+   use the same names as `kylas-airtable-sync`, so paste the same PAT:
 
-   ```bash
-   export AIRTABLE_TOKEN=pat...
-   export AIRTABLE_WORKSPACE_ID=wsp...          # to create a new base, or
-   export AIRTABLE_BASE_ID=app...               # to add the tables to an existing base
-   python -m collector setup
-   ```
+   | Secret | Value |
+   |---|---|
+   | `AIRTABLE_PAT` | Airtable personal access token (scopes `data.records:read/write`, `schema.bases:read/write`, with access to the base) |
+   | `AIRTABLE_BASE_ID` | ID of the base for this research table (`app...`) |
+   | `APIFY_TOKEN` | Apify API token |
+
+   Optional variables: `START_DATE` (default `2026-01-01`), `APIFY_ACTOR_ID`
+   (default `automation-lab/tracxn-company-intelligence-scraper`).
+3. Create an empty base in Airtable (e.g. "Tracxn Research"), put its ID in
+   `AIRTABLE_BASE_ID`, then run the **Setup Airtable Schema (run once)** workflow
+   from the Actions tab. It creates the two tables below.
 
 ## Usage
 
+Run the **Tracxn sync** workflow from the Actions tab, or locally:
+
 ```bash
-export APIFY_TOKEN=apify_api_... APIFY_ACTOR_ID=username~tracxn-scraper
-export AIRTABLE_TOKEN=pat... AIRTABLE_BASE_ID=app...
+export APIFY_TOKEN=apify_api_... AIRTABLE_PAT=pat... AIRTABLE_BASE_ID=app...
 
-# Backfill everything since January, write reports, upsert into Airtable
-python -m collector sync --since 2026-01-01
-
-# Who had the best last month / last quarter (from the local snapshot)
+python -m collector setup                     # create tables (once)
+python -m collector sync --since 2026-01-01   # scrape, save, report, upsert
 python -m collector leaders --period last-month
 python -m collector leaders --period last-quarter --top 10
 ```
 
 `sync` merges into the existing snapshot and upserts on `Record Key`
 (company + round date + stage), so re-running it never creates duplicates.
-Use `--from-file dataset.json` to load a dataset you exported from Apify
-instead of starting a new run, and `--no-airtable` to skip the upload.
+Use `--urls other.txt` for a different company list, `--from-file dataset.json`
+to load a dataset exported from Apify, and `--no-airtable` to skip the upload.
 
 "Best" = the most money raised in the period (all rounds in the period summed);
 stage, last amount and employee band come from the company's latest round in it.
 
+### What the data can and can't show
+
+- The actor reads **public** Tracxn profiles. Funding amount, date and investors
+  come from the profile's funding sentence ("Its latest funding round was a
+  Series B round on Aug 12, 2026 for $40M ... Its top investors are ..."). Fields
+  Tracxn hides for non-premium users come back empty.
+- Each scrape sees only a company's **latest** round. The snapshot keeps every
+  round it has seen, so history builds up from the first run; a company that
+  raised twice between two weekly runs only records the later round, and rounds
+  from before the first run (e.g. a February round when the first run is in
+  September) are not recovered.
+- Companies with no round since `START_DATE` (including unfunded ones) are skipped.
+
 ## Keeping it updated
 
 `.github/workflows/sync.yml` runs `sync` every Monday and commits the snapshot and
-reports. Configure in the GitHub repo settings:
-
-- Secrets: `APIFY_TOKEN`, `AIRTABLE_TOKEN`
-- Variables: `APIFY_ACTOR_ID`, `AIRTABLE_BASE_ID`, `START_DATE` (e.g. `2026-01-01`)
+reports back to the repo.
 
 ## Airtable tables
 
