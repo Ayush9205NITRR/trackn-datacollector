@@ -241,6 +241,14 @@ _IPO_HEADLINE = re.compile(r"\bipo\b|\bdrhp\b|\brhp\b|lists on|listing|market de
                            r"makes .*debut", re.I)
 
 
+def still_valid(rec: FundingRecord, min_unlabeled_usd: float) -> bool:
+    """Re-check a saved deal against the current rules, so rows saved before a rule
+    change (e.g. stake sales once counted as funding) drop out of the history."""
+    if rec.deal_type == FUNDING and rec.headline and _NOT_A_DEAL.search(rec.headline):
+        return False
+    return qualifies(rec, min_unlabeled_usd)
+
+
 def _deal_type(item: dict, headline: str) -> Optional[str]:
     """FUNDING, MNA, IPO, or None when the item isn't a deal we track."""
     kind = str(_pick(item, "deal_type") or "")
@@ -316,12 +324,16 @@ def normalize_item(item: dict) -> Optional[FundingRecord]:
     # Post date = when the article/announcement was published; for news items
     # without a separate publish field, that is the item's own date.
     post_date = parse_date(_pick(item, "post_date")) or (round_date if headline else None)
+    stage = str(_pick(item, "stage") or "").strip() if deal_type == FUNDING else ""
+    if stage.islower():  # "series b" -> "Series B"
+        stage = stage.title()
     return FundingRecord(
         company=str(company).strip(),
         round_date=round_date,
         post_date=post_date,
         amount_usd=parse_amount(amount),
-        stage=str(_pick(item, "stage") or "").strip() if deal_type == FUNDING else "",
+        stage=stage,
+        headline=headline,
         investors=parse_investors(investors),
         employee_band=employee_band(_pick(item, "employee_band")),
         domain=str(_pick(item, "domain") or "").strip(),

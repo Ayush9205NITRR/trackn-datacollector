@@ -25,7 +25,7 @@ from datetime import date
 from pathlib import Path
 
 from . import airtable, apify, leaders, sources
-from .normalize import normalize, parse_date
+from .normalize import normalize, parse_date, still_valid
 from .schema import (FUNDING_FIELDS, FUNDING_TABLE, IPO, LEADERS_FIELDS, LEADERS_TABLE, MNA,
                      FundingRecord)
 
@@ -108,7 +108,10 @@ def cmd_sync(args):
 
     # Merge with the previous snapshot so the research table accumulates over time;
     # a new report of a known deal fills in fields the earlier one lacked.
-    merged = {r.key: r for r in (_load_snapshot() if SNAPSHOT.exists() else [])}
+    saved = _load_snapshot() if SNAPSHOT.exists() else []
+    if min_unlabeled is not None:
+        saved = [r for r in saved if still_valid(r, min_unlabeled)]
+    merged = {r.key: r for r in saved}
     for rec in fresh:
         merged[rec.key] = rec.merge(merged[rec.key]) if rec.key in merged else rec
     records = sorted(merged.values(), key=lambda r: (r.round_date or date.min), reverse=True)

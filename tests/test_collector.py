@@ -174,6 +174,17 @@ class PipelineTest(unittest.TestCase):
         self.assertEqual(leaders.period_bounds("fy-to-date", date(2027, 2, 1))[1],
                          date(2026, 4, 1))
 
+    def test_saved_rows_rechecked_against_current_rules(self):
+        from collector.normalize import still_valid
+        from collector.schema import FundingRecord
+        stake_sale = FundingRecord("Mastercard", date(2026, 9, 23), 112.5e6,
+                                   headline="Mastercard sells entire 4.31% Pine Labs stake")
+        seed = FundingRecord("Kiddo", date(2026, 8, 1), 4e6, stage="Seed")
+        self.assertFalse(still_valid(stake_sale, 10e6))
+        self.assertFalse(still_valid(seed, 10e6))
+        self.assertTrue(all(still_valid(r, 10e6) for r in self.records))
+        self.assertEqual(self.by_name["Balwaan Krishi"].stage, "Series B")  # was "series b"
+
     def test_all_stages_mode_keeps_seed(self):
         items = json.loads(FIXTURE.read_text())
         records = normalize(items, since=FY27_H1[0], until=FY27_H1[1], country="India")

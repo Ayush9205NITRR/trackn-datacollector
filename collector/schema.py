@@ -37,6 +37,7 @@ FUNDING_FIELDS = [
     {"name": "Quarter", "type": "singleLineText"},
     {"name": "Source", "type": "singleLineText"},
     {"name": "Source URL", "type": "url"},
+    {"name": "Headline", "type": "multilineText"},
     {"name": "Last Synced", "type": "date", "options": _ISO_DATE},
 ]
 
@@ -91,6 +92,7 @@ class FundingRecord:
     source: str = ""
     source_url: str = ""
     post_date: Optional[date] = None  # when the news article / announcement was published
+    headline: str = ""
 
     @property
     def ident(self) -> str:
@@ -149,6 +151,7 @@ class FundingRecord:
             "Quarter": self.quarter,
             "Source": self.source,
             "Source URL": self.source_url or None,
+            "Headline": self.headline,
             "Last Synced": synced.isoformat(),
         }
         return {k: v for k, v in fields.items() if v not in (None, "")}
