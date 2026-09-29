@@ -6,7 +6,7 @@
     "note": "Funding-rounds database: the only source that reaches back to 1 Apr. Charged per record; free Apify accounts get a one-time 50-record sample, so the backfill needs a paid Apify plan. Stage/country are also filtered by the collector.",
     "input": {
       "since": "{since}",
-      "countries": ["India"],
+      "countries": ["IN"],
       "maxItems": 5000
     }
   },
