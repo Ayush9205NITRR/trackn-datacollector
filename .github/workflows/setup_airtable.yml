@@ -18,4 +18,4 @@ jobs:
           AIRTABLE_PAT: ${{ secrets.AIRTABLE_PAT }}
           # "Tracxn Database" base / table; override with the variables if they move.
           AIRTABLE_BASE_ID: ${{ vars.AIRTABLE_BASE_ID || 'appQQ97d3jA6bwwb6' }}
-          AIRTABLE_FUNDING_TABLE: ${{ vars.AIRTABLE_FUNDING_TABLE || 'tblyAvdZRaCCgLP94' }}
+          AIRTABLE_FUNDING_TABLE: ${{ vars.AIRTABLE_FUNDING_TABLE || 'Deals' }}

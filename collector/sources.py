@@ -67,5 +67,7 @@ def run_all(token: str, sources: list, root: Path, since: date, until: date,
             tags["_amount_multiplier"] = source["amount_multiplier"]
         items += [{**i, **tags} for i in got]
     if failures and len(failures) == len(sources):
-        raise RuntimeError(f"every source failed: {', '.join(failures)}")
+        # Keep going: the saved deals still get uploaded and reported.
+        print(f"WARNING: every source failed ({', '.join(failures)}); "
+              "continuing with previously saved deals only")
     return items

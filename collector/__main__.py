@@ -145,6 +145,12 @@ def cmd_sync(args):
     token, base_id = _airtable_token(), _env("AIRTABLE_BASE_ID")
     tables = airtable.get_tables(token, base_id)
     funding, leaders_ref = _tables()
+    missing = [ref for ref in (funding, leaders_ref) if airtable.find_table(tables, ref) is None]
+    if missing:
+        have = ", ".join(f"'{t['name']}' ({t['id']})" for t in tables) or "none"
+        sys.exit(f"Airtable table(s) {missing} not found in base {base_id}. Tables there: "
+                 f"{have}. Run the 'Setup Airtable Schema' workflow to create them, or point "
+                 f"AIRTABLE_FUNDING_TABLE / AIRTABLE_LEADERS_TABLE at an existing table.")
     for ref, rows in ((funding, [r.to_airtable(today) for r in records]),
                       (leaders_ref, leader_rows)):
         n = airtable.upsert(token, base_id, ref, airtable.fill_primary(tables, ref, rows))

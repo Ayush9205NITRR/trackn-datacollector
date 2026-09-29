@@ -40,7 +40,7 @@ Pure Python 3.9+ standard library — no packages to install.
    to switch a source off.
 
 3. **Airtable**: the workflows write to the **Tracxn Database** base
-   (`appQQ97d3jA6bwwb6`), deals into table `tblyAvdZRaCCgLP94`, and create a
+   (`appQQ97d3jA6bwwb6`), deals into a table named **Deals**, and create a
    `Monthly Leaders` table next to it. Run the **Setup Airtable Schema (run once)**
    workflow from the Actions tab: it adds the missing columns to the existing table
    (its own columns and primary field are left as they are; sync fills the primary
@@ -109,7 +109,7 @@ python -m collector leaders --period last-quarter --top 10
 
 ```bash
 export APIFY_TOKEN=apify_api_... AIRTABLE_PAT=pat...
-export AIRTABLE_BASE_ID=appQQ97d3jA6bwwb6 AIRTABLE_FUNDING_TABLE=tblyAvdZRaCCgLP94
+export AIRTABLE_BASE_ID=appQQ97d3jA6bwwb6 AIRTABLE_FUNDING_TABLE=Deals
 
 python -m collector setup                     # add columns / tables (once)
 python -m collector sync                      # discover, save, report, upsert
