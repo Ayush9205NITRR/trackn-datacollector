@@ -25,7 +25,9 @@ jobs:
         env:
           APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
           AIRTABLE_PAT: ${{ secrets.AIRTABLE_PAT }}
-          AIRTABLE_BASE_ID: ${{ secrets.AIRTABLE_BASE_ID }}
+          # "Tracxn Database" base / table; override with the variables if they move.
+          AIRTABLE_BASE_ID: ${{ vars.AIRTABLE_BASE_ID || 'appQQ97d3jA6bwwb6' }}
+          AIRTABLE_FUNDING_TABLE: ${{ vars.AIRTABLE_FUNDING_TABLE || 'tblyAvdZRaCCgLP94' }}
           START_DATE: ${{ inputs.since || vars.START_DATE || '2026-01-01' }}
         run: python -m collector sync
       - name: Commit snapshot and reports

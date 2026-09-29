@@ -16,4 +16,6 @@ jobs:
         run: python -m collector setup
         env:
           AIRTABLE_PAT: ${{ secrets.AIRTABLE_PAT }}
-          AIRTABLE_BASE_ID: ${{ secrets.AIRTABLE_BASE_ID }}
+          # "Tracxn Database" base / table; override with the variables if they move.
+          AIRTABLE_BASE_ID: ${{ vars.AIRTABLE_BASE_ID || 'appQQ97d3jA6bwwb6' }}
+          AIRTABLE_FUNDING_TABLE: ${{ vars.AIRTABLE_FUNDING_TABLE || 'tblyAvdZRaCCgLP94' }}

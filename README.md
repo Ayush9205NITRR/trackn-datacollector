@@ -17,29 +17,35 @@ Pure Python 3.9+ standard library — no packages to install.
 
 1. **Companies to track**: add Tracxn company-profile URLs to `companies.txt`, one
    per line (copy them from the company pages on tracxn.com).
-2. **GitHub secrets** (Settings → Secrets and variables → Actions). The Airtable ones
-   use the same names as `kylas-airtable-sync`, so paste the same PAT:
+2. **GitHub secrets** (Settings → Secrets and variables → Actions). The Airtable
+   token uses the same name as `kylas-airtable-sync`, so paste the same PAT:
 
    | Secret | Value |
    |---|---|
-   | `AIRTABLE_PAT` | Airtable personal access token (scopes `data.records:read/write`, `schema.bases:read/write`, with access to the base) |
-   | `AIRTABLE_BASE_ID` | ID of the base for this research table (`app...`) |
+   | `AIRTABLE_PAT` | Airtable personal access token (scopes `data.records:read/write`, `schema.bases:read/write`, with access to the Tracxn Database base) |
    | `APIFY_TOKEN` | Apify API token |
 
-   Optional variables: `START_DATE` (default `2026-01-01`), `APIFY_ACTOR_ID`
-   (default `automation-lab/tracxn-company-intelligence-scraper`).
-3. Create an empty base in Airtable (e.g. "Tracxn Research"), put its ID in
-   `AIRTABLE_BASE_ID`, then run the **Setup Airtable Schema (run once)** workflow
-   from the Actions tab. It creates the two tables below.
+3. **Airtable target**: the workflows write to the **Tracxn Database** base
+   (`appQQ97d3jA6bwwb6`), funding rows into table `tblyAvdZRaCCgLP94`, and create a
+   `Monthly Leaders` table next to it. Run the **Setup Airtable Schema (run once)**
+   workflow from the Actions tab: it adds the missing columns to the existing table
+   (its own columns and primary field are left as they are; sync fills the primary
+   field with the company name) and creates `Monthly Leaders`.
+
+   Optional variables to override: `AIRTABLE_BASE_ID`, `AIRTABLE_FUNDING_TABLE`,
+   `AIRTABLE_LEADERS_TABLE` (name or `tbl...` ID), `START_DATE` (default
+   `2026-01-01`), `APIFY_ACTOR_ID` (default
+   `automation-lab/tracxn-company-intelligence-scraper`).
 
 ## Usage
 
 Run the **Tracxn sync** workflow from the Actions tab, or locally:
 
 ```bash
-export APIFY_TOKEN=apify_api_... AIRTABLE_PAT=pat... AIRTABLE_BASE_ID=app...
+export APIFY_TOKEN=apify_api_... AIRTABLE_PAT=pat...
+export AIRTABLE_BASE_ID=appQQ97d3jA6bwwb6 AIRTABLE_FUNDING_TABLE=tblyAvdZRaCCgLP94
 
-python -m collector setup                     # create tables (once)
+python -m collector setup                     # add columns / tables (once)
 python -m collector sync --since 2026-01-01   # scrape, save, report, upsert
 python -m collector leaders --period last-month
 python -m collector leaders --period last-quarter --top 10
@@ -73,7 +79,7 @@ reports back to the repo.
 
 ## Airtable tables
 
-**Funding Rounds** — Record Key, Company, Domain, Tracxn URL, Sector, Location,
+**Tracxn Database** (funding rounds) — Record Key, Company, Domain, Tracxn URL, Sector, Location,
 Employee Size Band, Funding Stage, Last Funding Amount (USD), Last Funding Date,
 Backed By, Total Funding (USD), Month, Quarter, Last Synced.
 

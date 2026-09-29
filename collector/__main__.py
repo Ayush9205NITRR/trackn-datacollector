@@ -6,6 +6,8 @@ Environment:
   AIRTABLE_PAT           Airtable personal access token (same secret as kylas-airtable-sync)
                          (scopes: data.records:read/write, schema.bases:read/write)
   AIRTABLE_BASE_ID       Existing base to write to (appXXXX...)
+  AIRTABLE_FUNDING_TABLE Table name or ID for funding rounds (default "Funding Rounds")
+  AIRTABLE_LEADERS_TABLE Table name or ID for the leaderboard (default "Monthly Leaders")
   AIRTABLE_WORKSPACE_ID  Only for `setup` when creating a brand-new base
   START_DATE             First round date to keep (default: Jan 1 of this year)
 """
@@ -19,7 +21,8 @@ from pathlib import Path
 
 from . import airtable, apify, leaders
 from .normalize import normalize, parse_date
-from .schema import FUNDING_TABLE, LEADERS_TABLE, FundingRecord
+from .schema import (FUNDING_FIELDS, FUNDING_TABLE, LEADERS_FIELDS, LEADERS_TABLE,
+                     FundingRecord)
 
 ROOT = Path(__file__).resolve().parent.parent
 SNAPSHOT = ROOT / "data" / "funding_rounds.json"
@@ -35,6 +38,11 @@ def _env(name: str, required: bool = True) -> str:
 
 def _airtable_token() -> str:
     return _env("AIRTABLE_PAT", required=False) or _env("AIRTABLE_TOKEN")
+
+
+def _tables() -> tuple:
+    return (_env("AIRTABLE_FUNDING_TABLE", required=False) or FUNDING_TABLE,
+            _env("AIRTABLE_LEADERS_TABLE", required=False) or LEADERS_TABLE)
 
 
 def _start_date(arg) -> date:
@@ -53,8 +61,10 @@ def cmd_setup(args):
     token = _airtable_token()
     base_id = _env("AIRTABLE_BASE_ID", required=False)
     if base_id:
-        created = airtable.ensure_tables(token, base_id)
-        print(f"base {base_id}: created tables {created or 'none (already present)'}")
+        tables = airtable.get_tables(token, base_id)
+        funding, leaders_ref = _tables()
+        for ref, fields in ((funding, FUNDING_FIELDS), (leaders_ref, LEADERS_FIELDS)):
+            print(airtable.ensure_table(token, base_id, tables, ref, fields))
     else:
         base_id = airtable.create_base(token, _env("AIRTABLE_WORKSPACE_ID"), args.name)
         print(f"created base {base_id}; set AIRTABLE_BASE_ID={base_id}")
@@ -93,10 +103,12 @@ def cmd_sync(args):
     if args.no_airtable:
         return
     token, base_id = _airtable_token(), _env("AIRTABLE_BASE_ID")
-    n = airtable.upsert(token, base_id, FUNDING_TABLE, [r.to_airtable(today) for r in records])
-    print(f"upserted {n} rows into '{FUNDING_TABLE}'")
-    n = airtable.upsert(token, base_id, LEADERS_TABLE, leader_rows)
-    print(f"upserted {n} rows into '{LEADERS_TABLE}'")
+    tables = airtable.get_tables(token, base_id)
+    funding, leaders_ref = _tables()
+    for ref, rows in ((funding, [r.to_airtable(today) for r in records]),
+                      (leaders_ref, leader_rows)):
+        n = airtable.upsert(token, base_id, ref, airtable.fill_primary(tables, ref, rows))
+        print(f"upserted {n} rows into '{ref}'")
 
 
 def _write_reports(records, today, top) -> list:
