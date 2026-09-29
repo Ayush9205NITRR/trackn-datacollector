@@ -251,8 +251,12 @@ def normalize_item(item: dict) -> Optional[FundingRecord]:
         company = _clean_name(m.group("company"))
     if not company:
         return None
+    if headline:  # news feeds often keep the descriptor: "Enterprise AI Startup Ema"
+        company = _clean_name(str(company)) or company
 
     amount = _pick(item, "amount")
+    if isinstance(amount, (int, float)) and item.get("_amount_multiplier"):
+        amount = amount * item["_amount_multiplier"]
     if amount is None and headline and (m := _HEADLINE_MONEY.search(headline)):
         amount = m.group(0)
     investors = _pick(item, "investors")

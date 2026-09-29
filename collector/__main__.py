@@ -93,7 +93,7 @@ def cmd_sync(args):
         items = json.loads(Path(args.from_file).read_text())
     else:
         items = sources.run_all(_env("APIFY_TOKEN"), sources.load(Path(args.sources)),
-                                ROOT, since, today)
+                                ROOT, since, today, raw_dir=SNAPSHOT.parent / "raw")
     print(f"fetched {len(items)} raw items")
 
     min_unlabeled = None if args.all_stages else float(

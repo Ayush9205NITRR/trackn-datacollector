@@ -6,8 +6,18 @@
     "note": "Funding-rounds database: backfill of Indian Series A+ rounds for the whole period. Check input field names against the actor's Input tab.",
     "input": {
       "country": "India",
-      "rounds": ["Series A", "Series B", "Series C", "Series D", "Series E", "Series F",
-                 "Series G", "Series H", "Private Equity", "Growth"],
+      "rounds": [
+        "Series A",
+        "Series B",
+        "Series C",
+        "Series D",
+        "Series E",
+        "Series F",
+        "Series G",
+        "Series H",
+        "Private Equity",
+        "Growth"
+      ],
       "announcedFrom": "{since}",
       "announcedTo": "{until}",
       "maxItems": 5000
@@ -20,17 +30,18 @@
     "note": "Inc42 + YourStory funding news (RSS: recent weeks only). Check input field names against the actor's Input tab.",
     "input": {
       "daysBack": "{days_back}",
-      "maxResults": 1000
+      "maxResults": 500
     }
   },
   {
     "name": "entrackr",
     "actor": "nesora/india-startup-funding-tracker",
     "enabled": true,
-    "note": "Entrackr news feed: funding + M&A headlines (RSS: recent weeks only).",
+    "note": "Entrackr news feed: funding + M&A headlines (RSS: recent weeks only). amountUsd is reported in millions.",
     "input": {
       "maxItems": 1000
-    }
+    },
+    "amount_multiplier": 1000000
   },
   {
     "name": "tracxn-profiles",

@@ -28,5 +28,9 @@
   {"_source": "datahyena", "company": "Globex", "round": "Series C", "amountUsd": 90000000,
    "announcedDate": "2026-08-01", "country": "United States"},
   {"_source": "tracxn-profiles", "status": "failed",
-   "url": "https://tracxn.com/d/companies/broken/__x", "error": "404"}
+   "url": "https://tracxn.com/d/companies/broken/__x", "error": "404"},
+  {"_source": "entrackr", "_amount_multiplier": 1000000,
+   "headline": "Physical AI company SiMa.ai raises $150 Mn in Series C round",
+   "company": "Physical AI Company Simaai", "round": "Series C", "amountUsd": 150,
+   "date": "2026-09-28", "link": "https://entrackr.com/news/simaai"}
 ]

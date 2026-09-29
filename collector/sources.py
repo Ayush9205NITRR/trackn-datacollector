@@ -4,6 +4,8 @@ Each source is {"name", "actor", "enabled", "input"}. Strings in "input" may use
 {since}, {until} (YYYY-MM-DD) and {days_back}; a value that is exactly
 "{days_back}" becomes a number. A source with "urls_file" instead sends the
 Tracxn company URLs in that file as startUrls (automation-lab profile scraper).
+"amount_multiplier" scales numeric amounts from a source that reports them in
+millions. Raw items are saved per source under raw_dir for debugging field names.
 """
 
 import json
@@ -40,7 +42,8 @@ def build_input(source: dict, root: Path, since: date, until: date):
     return fill(source.get("input", {}), since, until)
 
 
-def run_all(token: str, sources: list, root: Path, since: date, until: date) -> list:
+def run_all(token: str, sources: list, root: Path, since: date, until: date,
+            raw_dir: Path = None) -> list:
     """Run each source; tag items with _source. A failing source is reported and
     skipped so one broken actor doesn't block the rest."""
     items, failures = [], []
@@ -56,7 +59,13 @@ def run_all(token: str, sources: list, root: Path, since: date, until: date) -> 
             failures.append(source["name"])
             continue
         print(f"[{source['name']}] {len(got)} items")
-        items += [{**i, "_source": source["name"]} for i in got]
+        if raw_dir:
+            raw_dir.mkdir(parents=True, exist_ok=True)
+            (raw_dir / f"{source['name']}.json").write_text(json.dumps(got, indent=1) + "\n")
+        tags = {"_source": source["name"]}
+        if "amount_multiplier" in source:
+            tags["_amount_multiplier"] = source["amount_multiplier"]
+        items += [{**i, **tags} for i in got]
     if failures and len(failures) == len(sources):
         raise RuntimeError(f"every source failed: {', '.join(failures)}")
     return items
