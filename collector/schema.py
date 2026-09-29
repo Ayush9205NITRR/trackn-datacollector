@@ -158,7 +158,11 @@ class FundingRecord:
             "Headline": self.headline,
             "Last Synced": synced.isoformat(),
         }
-        return {k: v for k, v in fields.items() if v not in (None, "")}
+        out = {k: v for k, v in fields.items() if v not in (None, "")}
+        # Always send LinkedIn URL (null clears it), so a corrected or removed
+        # match in data/linkedin.json also changes the row in Airtable.
+        out["LinkedIn URL"] = self.linkedin_url or None
+        return out
 
     def to_dict(self) -> dict:
         d = asdict(self)
