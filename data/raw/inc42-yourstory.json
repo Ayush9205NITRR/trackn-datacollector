@@ -1,0 +1,69 @@
+[
+ {
+  "startupName": "WEH Ventures Announces First",
+  "amountUsd": 30000000,
+  "amountOriginal": "\u20b9250 Cr",
+  "roundType": "seed",
+  "investors": [],
+  "sector": null,
+  "date": "Tue, 29 Sep 2026 06:34:49 +0000",
+  "title": "WEH Ventures Announces First Close Of \u20b9250 Cr Fund III",
+  "sourceUrl": "https://inc42.com/buzz/weh-ventures-announces-first-close-of-%e2%82%b9250-cr-fund-iii/",
+  "source": "Inc42",
+  "scraped_at": "2026-09-29T16:11:14Z"
+ },
+ {
+  "startupName": "Balwaan Krishi",
+  "amountUsd": 12000000,
+  "amountOriginal": "\u20b9100 Cr",
+  "roundType": "series b",
+  "investors": [
+   "First"
+  ],
+  "sector": null,
+  "date": "Mon, 28 Sep 2026 07:14:36 +0000",
+  "title": "Balwaan Krishi Bags \u20b9100 Cr To Scale Farm Equipment Manufacturing",
+  "sourceUrl": "https://inc42.com/buzz/balwaan-krishi-bags-%e2%82%b9100-cr-to-scale-farm-equipment-manufacturing/",
+  "source": "Inc42",
+  "scraped_at": "2026-09-29T16:11:14Z"
+ },
+ {
+  "startupName": "WEH Ventures marks first",
+  "amountUsd": 30000000,
+  "amountOriginal": "\u20b9250 Cr",
+  "roundType": null,
+  "investors": [],
+  "sector": null,
+  "date": "Tue, 29 Sep 2026 06:04:13 GMT",
+  "title": "WEH Ventures marks first close of Rs 250 Cr Fund III",
+  "sourceUrl": "https://yourstory.com/2026/09/weh-ventures-marks-first-close-of-rs-250-crore-fund-iii",
+  "source": "YourStory",
+  "scraped_at": "2026-09-29T16:11:22Z"
+ },
+ {
+  "startupName": "Bharat Housing Network",
+  "amountUsd": 5000000,
+  "amountOriginal": "$5 M",
+  "roundType": null,
+  "investors": [],
+  "sector": null,
+  "date": "Tue, 29 Sep 2026 11:41:15 GMT",
+  "title": "Bharat Housing Network secures $5M from Symbiotics",
+  "sourceUrl": "https://yourstory.com/2026/09/bharat-housing-network-secures-5-million-from-symbiotics",
+  "source": "YourStory",
+  "scraped_at": "2026-09-29T16:11:22Z"
+ },
+ {
+  "startupName": "Physical AI startup SiMa.ai",
+  "amountUsd": 150000000,
+  "amountOriginal": "$150 M",
+  "roundType": "series c",
+  "investors": [],
+  "sector": null,
+  "date": "Tue, 29 Sep 2026 02:51:40 GMT",
+  "title": "Physical AI startup SiMa.ai raises $150M in Series C",
+  "sourceUrl": "https://yourstory.com/2026/09/physical-ai-startup-simaai-raises-150-million-series-c",
+  "source": "YourStory",
+  "scraped_at": "2026-09-29T16:11:22Z"
+ }
+]
