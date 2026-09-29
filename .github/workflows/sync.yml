@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       since:
-        description: "Start date (YYYY-MM-DD), default START_DATE / Jan 1"
+        description: "Start date (YYYY-MM-DD), default START_DATE / 1 Apr 2026 (FY27)"
         required: false
 
 permissions:
@@ -28,7 +28,7 @@ jobs:
           # "Tracxn Database" base / table; override with the variables if they move.
           AIRTABLE_BASE_ID: ${{ vars.AIRTABLE_BASE_ID || 'appQQ97d3jA6bwwb6' }}
           AIRTABLE_FUNDING_TABLE: ${{ vars.AIRTABLE_FUNDING_TABLE || 'tblyAvdZRaCCgLP94' }}
-          START_DATE: ${{ inputs.since || vars.START_DATE || '2026-01-01' }}
+          START_DATE: ${{ inputs.since || vars.START_DATE || '2026-04-01' }}
         run: python -m collector sync
       - name: Commit snapshot and reports
         run: |

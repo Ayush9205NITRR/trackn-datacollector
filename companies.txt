@@ -1,3 +1,5 @@
-# Tracxn company-profile URLs to track, one per line (lines starting with # are ignored).
-# Copy the URL from the company's page on tracxn.com, e.g.
+# Optional. Deals are discovered automatically from the sources in sources.json.
+# List Tracxn company-profile URLs here (one per line) and enable the
+# "tracxn-profiles" source to also scrape those pages, e.g. to fill in
+# employee size band for companies only seen in news:
 # https://tracxn.com/d/companies/amatik/__8YF9sy4EQRz_XYexSL_9RxYxPYZuuxeJhO_gIO4rObU

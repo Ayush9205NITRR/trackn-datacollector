@@ -1,13 +1,16 @@
 import json
+import tempfile
 import unittest
 from datetime import date
 from pathlib import Path
 
-from collector import apify, leaders
-from collector.normalize import (employee_band, normalize, parse_amount, parse_date,
-                                 parse_funding_summary)
+from collector import apify, leaders, sources
+from collector.normalize import (employee_band, is_series_a_plus, normalize, parse_amount,
+                                 parse_date, parse_funding_summary)
+from collector.schema import MNA, company_ident, fiscal_quarter
 
 FIXTURE = Path(__file__).parent / "fixtures" / "sample_apify.json"
+FY27_H1 = (date(2026, 4, 1), date(2026, 9, 30))
 
 
 class ParsingTest(unittest.TestCase):
@@ -16,6 +19,8 @@ class ParsingTest(unittest.TestCase):
         self.assertEqual(parse_amount("USD 12.5 Mn"), 12.5e6)
         self.assertEqual(parse_amount("1.2B"), 1.2e9)
         self.assertEqual(parse_amount("4,000,000"), 4e6)
+        self.assertEqual(parse_amount("Rs 880 Cr"), 100e6)  # at 88 INR/USD
+        self.assertEqual(parse_amount("₹44 crore"), 5e6)
         self.assertIsNone(parse_amount("undisclosed"))
 
     def test_parse_date(self):
@@ -26,6 +31,19 @@ class ParsingTest(unittest.TestCase):
         self.assertEqual(employee_band(35), "11-50")
         self.assertEqual(employee_band("51-200"), "51-200")
         self.assertEqual(employee_band(1200), "1001-5000")
+
+    def test_series_a_plus(self):
+        for stage in ("Series A", "Series B2", "series c extension", "Growth", "Pre-IPO",
+                      "Private Equity"):
+            self.assertTrue(is_series_a_plus(stage), stage)
+        for stage in ("Seed", "Pre-Series A", "Angel", "Venture Debt", "IPO", "Grant", ""):
+            self.assertFalse(is_series_a_plus(stage), stage)
+
+    def test_company_ident_and_fiscal_quarter(self):
+        self.assertEqual(company_ident("Acme Robotics Pvt. Ltd."), company_ident("Acme Robotics"))
+        self.assertEqual(fiscal_quarter(date(2026, 4, 1)), "FY27 Q1")
+        self.assertEqual(fiscal_quarter(date(2026, 9, 30)), "FY27 Q2")
+        self.assertEqual(fiscal_quarter(date(2027, 1, 15)), "FY27 Q4")
 
 
 class FundingSummaryTest(unittest.TestCase):
@@ -45,9 +63,18 @@ class FundingSummaryTest(unittest.TestCase):
         self.assertEqual(parse_funding_summary("Amatik has not raised any funding rounds yet."), {})
 
 
-class UrlListTest(unittest.TestCase):
+class SourcesTest(unittest.TestCase):
+    def test_fill_placeholders(self):
+        since = date(2026, 4, 1)
+        got = sources.fill({"from": "{since}", "to": "{until}", "days": "{days_back}",
+                            "n": 5, "list": ["{since}"]}, since, date(2026, 9, 30))
+        self.assertEqual(got["from"], "2026-04-01")
+        self.assertEqual(got["to"], "2026-09-30")
+        self.assertIsInstance(got["days"], int)
+        self.assertEqual(got["list"], ["2026-04-01"])
+        self.assertEqual(got["n"], 5)
+
     def test_load_urls(self):
-        import tempfile
         with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
             f.write("# comment\nhttps://tracxn.com/d/companies/a/__1?utm=x\n\n"
                     "https://tracxn.com/d/companies/a/__1/  # dup\n")
@@ -55,46 +82,77 @@ class UrlListTest(unittest.TestCase):
         self.assertEqual(apify.build_input(["u"]), {"startUrls": [{"url": "u"}]})
 
     def test_rejects_non_tracxn(self):
-        import tempfile
         with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
             f.write("https://example.com/foo\n")
         with self.assertRaises(ValueError):
             apify.load_urls(f.name)
 
+    def test_repo_sources_config_is_valid(self):
+        cfg = sources.load(Path(__file__).parent.parent / "sources.json")
+        self.assertTrue(cfg)
+        for s in cfg:
+            self.assertIn("actor", s)
+            self.assertTrue("input" in s or "urls_file" in s)
+
 
 class PipelineTest(unittest.TestCase):
     def setUp(self):
-        self.records = normalize(json.loads(FIXTURE.read_text()), since=date(2026, 1, 1))
+        items = json.loads(FIXTURE.read_text())
+        self.records = normalize(items, since=FY27_H1[0], until=FY27_H1[1], country="India",
+                                 min_unlabeled_usd=10e6)
+        self.by_name = {r.company: r for r in self.records}
 
-    def test_filters_rounds_before_start(self):
-        names = {r.company for r in self.records}
-        self.assertNotIn("Old News", names)
-        self.assertNotIn("Amatik", names)  # unfunded: no round to record
-        self.assertEqual(len(self.records), 5)
+    def test_keeps_only_series_a_plus_and_mna_in_period_and_country(self):
+        self.assertEqual(sorted(self.by_name), sorted([
+            "Acme Robotics Pvt Ltd", "Byte Pay", "Cloudnest", "PayZen", "Blinkit", "Lernify"]))
+        # Seed (Byte Pay's), Pre-Series A (Kiddo), pre-FY (Old News), US (Globex),
+        # non-deal news (Swiggy CFO) and failed scrapes are all dropped.
 
-    def test_last_month_leaders(self):
-        label, start, end = leaders.period_bounds("last-month", date(2026, 9, 29))
-        self.assertEqual((label, start, end), ("2026-08", date(2026, 8, 1), date(2026, 8, 31)))
+    def test_merges_same_deal_from_two_sources(self):
+        acme = self.by_name["Acme Robotics Pvt Ltd"]
+        self.assertEqual(acme.investors, ["Sequoia", "Accel", "Y Combinator"])
+        self.assertEqual(acme.employee_band, "51-200")
+        self.assertEqual(acme.source_url, "https://inc42.com/buzz/acme")
+        self.assertEqual(acme.source, "datahyena, inc42-yourstory")
+
+    def test_mna_from_headlines(self):
+        blinkit, lernify = self.by_name["Blinkit"], self.by_name["Lernify"]
+        self.assertEqual((blinkit.deal_type, blinkit.acquirer), (MNA, "Zomato"))
+        self.assertEqual(blinkit.amount_usd, 568e6)
+        self.assertEqual((lernify.deal_type, lernify.acquirer), (MNA, "upGrad"))
+        self.assertEqual(self.by_name["PayZen"].investors, ["Peak XV"])
+
+    def test_fy27_h1_leaders(self):
+        label, start, end = leaders.custom_bounds(*FY27_H1)
+        self.assertEqual(label, "FY27 Q1–Q2")
         rows = leaders.rank(self.records, start, end)
-        self.assertEqual([r["company"] for r in rows], ["Acme Robotics", "Byte Pay", "Quiet Co"])
-        top = rows[0]
-        self.assertEqual(top["employee_band"], "51-200")
-        self.assertEqual(top["tracxn_url"], "https://tracxn.com/d/companies/acme-robotics/__acme1")
-        self.assertEqual(top["stage"], "Series B")
-        self.assertEqual(top["last_amount_usd"], 40e6)
-        self.assertEqual(top["backed_by"], ["Sequoia", "Accel", "Y Combinator"])
+        self.assertEqual([r["company"] for r in rows],
+                         ["Cloudnest", "Acme Robotics Pvt Ltd", "PayZen", "Byte Pay"])
+        acme = rows[1]
+        self.assertEqual((acme["employee_band"], acme["stage"], acme["last_amount_usd"]),
+                         ("51-200", "Series B", 40e6))
+        self.assertEqual(acme["backed_by"], ["Sequoia", "Accel", "Y Combinator"])
+        deals = leaders.mna(self.records, start, end)
+        self.assertEqual([d.company for d in deals], ["Lernify", "Blinkit"])
+        md = leaders.to_markdown(rows, label, deals)
+        self.assertIn("## M&A — FY27 Q1–Q2", md)
+        self.assertIn("| Blinkit | Zomato | $568.0M |", md)
 
-    def test_last_quarter_sums_rounds(self):
-        label, start, end = leaders.period_bounds("last-quarter", date(2026, 9, 29))
-        self.assertEqual(label, "2026-Q2")
-        rows = leaders.rank(self.records, start, end)
-        self.assertEqual(rows[0]["company"], "Cloudnest")
+    def test_periods(self):
+        today = date(2026, 9, 29)
+        self.assertEqual(leaders.period_bounds("last-month", today),
+                         ("2026-08", date(2026, 8, 1), date(2026, 8, 31)))
+        self.assertEqual(leaders.period_bounds("last-quarter", today),
+                         ("FY27 Q1", date(2026, 4, 1), date(2026, 6, 30)))
+        self.assertEqual(leaders.period_bounds("fy-to-date", today),
+                         ("FY27 YTD", date(2026, 4, 1), today))
+        self.assertEqual(leaders.period_bounds("fy-to-date", date(2027, 2, 1))[1],
+                         date(2026, 4, 1))
 
-        label, start, end = leaders.period_bounds("last-quarter", date(2026, 10, 5))
-        rows = leaders.rank(self.records, start, end)
-        byte_pay = next(r for r in rows if r["company"] == "Byte Pay")
-        self.assertEqual(byte_pay["raised_in_period_usd"], 15.5e6)  # seed + series A
-        self.assertEqual(byte_pay["stage"], "Series A")
+    def test_all_stages_mode_keeps_seed(self):
+        items = json.loads(FIXTURE.read_text())
+        records = normalize(items, since=FY27_H1[0], until=FY27_H1[1], country="India")
+        self.assertIn("Kiddo", {r.company for r in records})
 
 
 if __name__ == "__main__":

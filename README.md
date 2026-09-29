@@ -1,23 +1,29 @@
 # trackn-datacollector
 
-Keeps a research table of startup funding rounds from **Tracxn**, scraped with
-**Apify** and stored in **Airtable**, and answers "who had the best month/quarter":
-the companies that raised the most, with their employee size band, last funding
-amount, funding stage and investors (backed by).
+Finds **every Indian company that raised Series A or later, or went through M&A**,
+from the start of the financial year (FY27 = from 1 Apr 2026), keeps them in the
+**Tracxn Database** Airtable table, and answers "who had the best quarter":
+the companies that raised the most, with employee size band, last funding amount,
+funding stage and investors (backed by).
+
+No company list needed: deals are discovered from Apify actors.
 
 ```
-companies.txt (Tracxn URLs) ──> Apify: automation-lab/tracxn-company-intelligence-scraper
-    ──> normalize (parses Tracxn's funding sentence) ──> data/funding_rounds.json ──> Airtable "Funding Rounds"
-                                                            └──> rank last month / quarter ──> reports/*.md + Airtable "Monthly Leaders"
+sources.json ──> Apify actors ──────────────────────────────┐
+  datahyena/company-funding-rounds   (funding-rounds database: backfill)
+  nexgendata/india-startup-funding-tracker  (Inc42 + YourStory news)
+  nesora/india-startup-funding-tracker      (Entrackr news: funding + M&A)
+                                                             ▼
+normalize ─> keep Series A+ & M&A, India, since 1 Apr ─> merge duplicates across sources
+    ─> data/funding_rounds.json ─> Airtable "Tracxn Database"
+    └─> rank last month / last FY quarter / FY to date ─> reports/*.md + Airtable "Monthly Leaders"
 ```
 
 Pure Python 3.9+ standard library — no packages to install.
 
 ## Setup
 
-1. **Companies to track**: add Tracxn company-profile URLs to `companies.txt`, one
-   per line (copy them from the company pages on tracxn.com).
-2. **GitHub secrets** (Settings → Secrets and variables → Actions). The Airtable
+1. **GitHub secrets** (Settings → Secrets and variables → Actions). The Airtable
    token uses the same name as `kylas-airtable-sync`, so paste the same PAT:
 
    | Secret | Value |
@@ -25,63 +31,89 @@ Pure Python 3.9+ standard library — no packages to install.
    | `AIRTABLE_PAT` | Airtable personal access token (scopes `data.records:read/write`, `schema.bases:read/write`, with access to the Tracxn Database base) |
    | `APIFY_TOKEN` | Apify API token |
 
-3. **Airtable target**: the workflows write to the **Tracxn Database** base
-   (`appQQ97d3jA6bwwb6`), funding rows into table `tblyAvdZRaCCgLP94`, and create a
+2. **Check the actor inputs** in `sources.json`. Open each actor's *Input* tab on
+   Apify and make sure the field names match (e.g. the date-range and country
+   filters for datahyena). Wrong names usually don't fail — the actor just ignores
+   them — and the collector filters by date, country and stage itself anyway, but
+   the right filters make runs cheaper and more complete. Set `"enabled": false`
+   to switch a source off.
+
+3. **Airtable**: the workflows write to the **Tracxn Database** base
+   (`appQQ97d3jA6bwwb6`), deals into table `tblyAvdZRaCCgLP94`, and create a
    `Monthly Leaders` table next to it. Run the **Setup Airtable Schema (run once)**
    workflow from the Actions tab: it adds the missing columns to the existing table
    (its own columns and primary field are left as they are; sync fills the primary
-   field with the company name) and creates `Monthly Leaders`.
+   field with the company name) and creates `Monthly Leaders`. Re-run it after
+   upgrading — new columns (Deal Type, Acquirer, Country, Source, Source URL) are
+   added the same way.
 
-   Optional variables to override: `AIRTABLE_BASE_ID`, `AIRTABLE_FUNDING_TABLE`,
-   `AIRTABLE_LEADERS_TABLE` (name or `tbl...` ID), `START_DATE` (default
-   `2026-01-01`), `APIFY_ACTOR_ID` (default
-   `automation-lab/tracxn-company-intelligence-scraper`).
+4. Run the **Tracxn sync** workflow. It then runs every Monday.
 
-## Usage
+Optional repository variables: `START_DATE` (default `2026-04-01`), `COUNTRY`
+(default `India`), `MIN_UNLABELED_USD`, `INR_PER_USD`, `AIRTABLE_BASE_ID`,
+`AIRTABLE_FUNDING_TABLE`, `AIRTABLE_LEADERS_TABLE`.
 
-Run the **Tracxn sync** workflow from the Actions tab, or locally:
+## What gets kept
+
+- **Funding**: Series A, B, C… (incl. extensions like "Series B2"), growth, private
+  equity, pre-IPO. Dropped: seed, angel, pre-Series A, debt, grants, IPOs.
+  Rounds a source doesn't label are kept only if at least $10M (`MIN_UNLABELED_USD`).
+  `sync --all-stages` keeps everything.
+- **M&A**: deals a source marks as acquisitions/mergers, and news headlines like
+  "Zomato acquires quick commerce startup Blinkit for $568 Mn" or "X acquired by Y"
+  (target = the company, acquirer in its own column).
+- Only deals dated from `START_DATE`, in `COUNTRY` when the source reports a country.
+- The same deal from several sources (same company, round and month) is merged
+  into one row: investors are combined, and gaps (employees, domain, link) are
+  filled from whichever source has them. Amounts in rupees are converted to USD.
+
+## Reports
+
+`sync` writes to `reports/` and to the Monthly Leaders table:
+
+- `leaders_<YYYY-MM>.md` — last month
+- `leaders_FY27_Q1.md` — last completed FY quarter (FY27 Q1 = Apr–Jun, Q2 = Jul–Sep)
+- `leaders_FY27_YTD.md` — the financial year so far (= Q1–Q2 FY27 at the end of September)
+
+Each lists the top funded companies (ranked by total raised in the period) and the
+M&A deals in it. Any range on demand:
+
+```bash
+python -m collector leaders --from 2026-04-01 --to 2026-09-30   # FY27 Q1–Q2
+python -m collector leaders --period last-quarter --top 10
+```
+
+## Running locally
 
 ```bash
 export APIFY_TOKEN=apify_api_... AIRTABLE_PAT=pat...
 export AIRTABLE_BASE_ID=appQQ97d3jA6bwwb6 AIRTABLE_FUNDING_TABLE=tblyAvdZRaCCgLP94
 
 python -m collector setup                     # add columns / tables (once)
-python -m collector sync --since 2026-01-01   # scrape, save, report, upsert
-python -m collector leaders --period last-month
-python -m collector leaders --period last-quarter --top 10
+python -m collector sync                      # discover, save, report, upsert
+python -m collector sync --from-file dataset.json --no-airtable   # offline test
 ```
 
 `sync` merges into the existing snapshot and upserts on `Record Key`
-(company + round date + stage), so re-running it never creates duplicates.
-Use `--urls other.txt` for a different company list, `--from-file dataset.json`
-to load a dataset exported from Apify, and `--no-airtable` to skip the upload.
+(company | round | month), so re-running never creates duplicates.
 
-"Best" = the most money raised in the period (all rounds in the period summed);
-stage, last amount and employee band come from the company's latest round in it.
+## Limits
 
-### What the data can and can't show
-
-- The actor reads **public** Tracxn profiles. Funding amount, date and investors
-  come from the profile's funding sentence ("Its latest funding round was a
-  Series B round on Aug 12, 2026 for $40M ... Its top investors are ..."). Fields
-  Tracxn hides for non-premium users come back empty.
-- Each scrape sees only a company's **latest** round. The snapshot keeps every
-  round it has seen, so history builds up from the first run; a company that
-  raised twice between two weekly runs only records the later round, and rounds
-  from before the first run (e.g. a February round when the first run is in
-  September) are not recovered.
-- Companies with no round since `START_DATE` (including unfunded ones) are skipped.
-
-## Keeping it updated
-
-`.github/workflows/sync.yml` runs `sync` every Monday and commits the snapshot and
-reports back to the repo.
+- **News sources only reach back a few weeks** (they read RSS feeds). The April–
+  September backfill depends on the datahyena database; after that, weekly runs
+  catch new deals from all three sources.
+- Coverage is what these sources report — deals no one wrote about are missed,
+  and headline-only M&A items may lack amount and employee size.
+- **Employee size band** comes from sources that carry headcount (datahyena).
+  Companies only seen in news have it blank; to fill those, add their Tracxn URLs
+  to `companies.txt` and enable the `tracxn-profiles` source.
 
 ## Airtable tables
 
-**Tracxn Database** (funding rounds) — Record Key, Company, Domain, Tracxn URL, Sector, Location,
-Employee Size Band, Funding Stage, Last Funding Amount (USD), Last Funding Date,
-Backed By, Total Funding (USD), Month, Quarter, Last Synced.
+**Tracxn Database** (deals) — Record Key, Company, Deal Type, Domain, Tracxn URL,
+Sector, Location, Country, Employee Size Band, Funding Stage, Last Funding Amount
+(USD), Last Funding Date, Backed By, Acquirer, Total Funding (USD), Month, Quarter
+(FY), Source, Source URL, Last Synced.
 
 **Monthly Leaders** — Period, Rank, Company, Employee Size Band, Funding Stage,
 Last Funding Amount (USD), Raised In Period (USD), Backed By, Tracxn URL.
@@ -91,6 +123,3 @@ Last Funding Amount (USD), Raised In Period (USD), Backed By, Tracxn URL.
 ```bash
 python -m unittest discover -s tests -t .
 ```
-
-> Scraping may be restricted by Tracxn's terms of service. If you have a Tracxn
-> subscription with API access, its export can be fed in with `--from-file`.

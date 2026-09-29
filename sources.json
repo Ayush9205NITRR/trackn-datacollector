@@ -1,0 +1,42 @@
+[
+  {
+    "name": "datahyena",
+    "actor": "datahyena/company-funding-rounds",
+    "enabled": true,
+    "note": "Funding-rounds database: backfill of Indian Series A+ rounds for the whole period. Check input field names against the actor's Input tab.",
+    "input": {
+      "country": "India",
+      "rounds": ["Series A", "Series B", "Series C", "Series D", "Series E", "Series F",
+                 "Series G", "Series H", "Private Equity", "Growth"],
+      "announcedFrom": "{since}",
+      "announcedTo": "{until}",
+      "maxItems": 5000
+    }
+  },
+  {
+    "name": "inc42-yourstory",
+    "actor": "nexgendata/india-startup-funding-tracker",
+    "enabled": true,
+    "note": "Inc42 + YourStory funding news (RSS: recent weeks only). Check input field names against the actor's Input tab.",
+    "input": {
+      "daysBack": "{days_back}",
+      "maxResults": 1000
+    }
+  },
+  {
+    "name": "entrackr",
+    "actor": "nesora/india-startup-funding-tracker",
+    "enabled": true,
+    "note": "Entrackr news feed: funding + M&A headlines (RSS: recent weeks only).",
+    "input": {
+      "maxItems": 1000
+    }
+  },
+  {
+    "name": "tracxn-profiles",
+    "actor": "automation-lab/tracxn-company-intelligence-scraper",
+    "enabled": false,
+    "note": "Optional: scrape specific Tracxn company pages listed in companies.txt.",
+    "urls_file": "companies.txt"
+  }
+]
