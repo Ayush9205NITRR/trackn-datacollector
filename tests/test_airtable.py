@@ -49,5 +49,21 @@ class FillPrimaryTest(unittest.TestCase):
         self.assertEqual(airtable.fill_primary(computed, "tblyAvdZRaCCgLP94", rows), rows)
 
 
+class PruneTest(unittest.TestCase):
+    @mock.patch("collector.airtable.time.sleep")
+    @mock.patch("collector.airtable.request_json")
+    def test_deletes_only_stale_keyed_rows(self, req, _sleep):
+        req.side_effect = [
+            {"records": [{"id": "rec1", "fields": {"Record Key": "keep"}},
+                         {"id": "rec2", "fields": {"Record Key": "old"}},
+                         {"id": "rec3", "fields": {}}]},  # hand-added row
+            None,
+        ]
+        self.assertEqual(airtable.prune("t", "appX", "tblY", {"keep"}), 1)
+        method, url = req.call_args_list[-1].args[:2]
+        self.assertEqual(method, "DELETE")
+        self.assertTrue(url.endswith("?records%5B%5D=rec2"))
+
+
 if __name__ == "__main__":
     unittest.main()

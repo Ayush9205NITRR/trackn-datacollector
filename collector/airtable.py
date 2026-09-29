@@ -81,3 +81,27 @@ def upsert(token: str, base_id: str, table: str, rows: list,
         request_json("PATCH", url, token, body)
         time.sleep(0.25)  # stay under 5 requests/second per base
     return len(rows)
+
+
+def prune(token: str, base_id: str, table: str, keep: set, key_field: str = "Record Key") -> int:
+    """Delete rows this tool wrote earlier (they have a Record Key) whose key is no
+    longer in `keep`. Rows without a Record Key — added by hand — are never touched."""
+    url = f"{API}/{base_id}/{urllib.parse.quote(table)}"
+    stale, offset = [], None
+    while True:
+        query = f"?pageSize=100&fields%5B%5D={urllib.parse.quote(key_field)}"
+        if offset:
+            query += f"&offset={offset}"
+        page = request_json("GET", url + query, token)
+        for rec in page.get("records", []):
+            key = rec.get("fields", {}).get(key_field)
+            if key and key not in keep:
+                stale.append(rec["id"])
+        offset = page.get("offset")
+        if not offset:
+            break
+    for i in range(0, len(stale), BATCH):
+        ids = "&".join(f"records%5B%5D={r}" for r in stale[i:i + BATCH])
+        request_json("DELETE", f"{url}?{ids}", token)
+        time.sleep(0.25)
+    return len(stale)

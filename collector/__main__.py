@@ -128,7 +128,11 @@ def cmd_sync(args):
     for ref, rows in ((funding, [r.to_airtable(today) for r in records]),
                       (leaders_ref, leader_rows)):
         n = airtable.upsert(token, base_id, ref, airtable.fill_primary(tables, ref, rows))
-        print(f"upserted {n} rows into '{ref}'")
+        # Remove rows this tool wrote before that are no longer in the data
+        # (rows added by hand have no Record Key and are left alone).
+        # Skipped on an empty result so an outage can never wipe the table.
+        gone = airtable.prune(token, base_id, ref, {r["Record Key"] for r in rows}) if rows else 0
+        print(f"upserted {n} rows into '{ref}', removed {gone} stale rows")
 
 
 def _write_reports(records, today, top) -> list:
