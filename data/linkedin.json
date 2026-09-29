@@ -1,1 +1,58 @@
-{}
+{
+ "acevector": {
+  "company": "AceVector",
+  "url": "",
+  "employee_band": "",
+  "via": "google",
+  "checked": "2026-09-29"
+ },
+ "balwaankrishi": {
+  "company": "Balwaan Krishi",
+  "url": "",
+  "employee_band": "",
+  "via": "google",
+  "checked": "2026-09-29"
+ },
+ "ema": {
+  "company": "Ema",
+  "url": "https://www.linkedin.com/company/escoladomeioambiente",
+  "employee_band": "",
+  "via": "google",
+  "checked": "2026-09-29"
+ },
+ "everbrands": {
+  "company": "EverBrands",
+  "url": "https://www.linkedin.com/company/everbrands-inc",
+  "employee_band": "11-50",
+  "via": "google",
+  "checked": "2026-09-29"
+ },
+ "moneyview": {
+  "company": "Moneyview",
+  "url": "",
+  "employee_band": "",
+  "via": "google",
+  "checked": "2026-09-29"
+ },
+ "nse": {
+  "company": "NSE",
+  "url": "https://www.linkedin.com/company/nse",
+  "employee_band": "",
+  "via": "google",
+  "checked": "2026-09-29"
+ },
+ "simaai": {
+  "company": "SiMa.ai",
+  "url": "https://www.linkedin.com/company/sima-ai",
+  "employee_band": "",
+  "via": "google",
+  "checked": "2026-09-29"
+ },
+ "ultraviolette": {
+  "company": "Ultraviolette",
+  "url": "",
+  "employee_band": "",
+  "via": "google",
+  "checked": "2026-09-29"
+ }
+}

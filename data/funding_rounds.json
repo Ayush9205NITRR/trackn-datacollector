@@ -26,7 +26,7 @@
     "amount_usd": 72290000.0,
     "stage": "",
     "investors": [],
-    "employee_band": "",
+    "employee_band": "11-50",
     "domain": "",
     "tracxn_url": "",
     "sector": "",
@@ -39,7 +39,28 @@
     "source_url": "https://entrackr.com/news/subway-india-operator-everbrands-files-drhp-to-raise-rs-600-cr-via-fresh-issue-12588957",
     "post_date": "2026-09-29",
     "headline": "Subway India operator EverBrands files DRHP to raise Rs 600 Cr via fresh issue",
-    "linkedin_url": ""
+    "linkedin_url": "https://www.linkedin.com/company/everbrands-inc"
+  },
+  {
+    "company": "SiMa.ai",
+    "round_date": "2026-09-29",
+    "amount_usd": 150000000.0,
+    "stage": "Series C",
+    "investors": [],
+    "employee_band": "",
+    "domain": "",
+    "tracxn_url": "",
+    "sector": "",
+    "location": "",
+    "total_funding_usd": null,
+    "deal_type": "Funding",
+    "acquirer": "",
+    "country": "",
+    "source": "inc42-yourstory, entrackr",
+    "source_url": "https://yourstory.com/2026/09/physical-ai-startup-simaai-raises-150-million-series-c",
+    "post_date": "2026-09-28",
+    "headline": "Physical AI startup SiMa.ai raises $150M in Series C",
+    "linkedin_url": "https://www.linkedin.com/company/sima-ai"
   },
   {
     "company": "Balwaan Krishi",
@@ -62,27 +83,6 @@
     "source_url": "https://inc42.com/buzz/balwaan-krishi-bags-%e2%82%b9100-cr-to-scale-farm-equipment-manufacturing/",
     "post_date": "2026-09-28",
     "headline": "Balwaan Krishi Bags \u20b9100 Cr To Scale Farm Equipment Manufacturing",
-    "linkedin_url": ""
-  },
-  {
-    "company": "SiMa.ai",
-    "round_date": "2026-09-28",
-    "amount_usd": 150000000.0,
-    "stage": "Series C",
-    "investors": [],
-    "employee_band": "",
-    "domain": "",
-    "tracxn_url": "",
-    "sector": "",
-    "location": "",
-    "total_funding_usd": null,
-    "deal_type": "Funding",
-    "acquirer": "",
-    "country": "",
-    "source": "entrackr",
-    "source_url": "https://entrackr.com/news/physical-ai-company-simaai-raises-150-mn-in-series-c-round-12587904",
-    "post_date": "2026-09-28",
-    "headline": "Physical AI company SiMa.ai raises $150 Mn in Series C round",
     "linkedin_url": ""
   },
   {
@@ -125,7 +125,7 @@
     "source_url": "https://entrackr.com/news/nse-makes-muted-debut-lists-at-rs-1800-with-084-premium-12570096",
     "post_date": "2026-09-22",
     "headline": "NSE makes muted debut, lists at Rs 1,800 with 0.84% premium",
-    "linkedin_url": ""
+    "linkedin_url": "https://www.linkedin.com/company/nse"
   },
   {
     "company": "Ema",
@@ -148,7 +148,7 @@
     "source_url": "https://entrackr.com/news/enterprise-ai-startup-ema-raises-77-mn-in-series-b-led-by-creaegis-12570021",
     "post_date": "2026-09-24",
     "headline": "Enterprise AI startup Ema raises $77 Mn in Series B led by Creaegis",
-    "linkedin_url": ""
+    "linkedin_url": "https://www.linkedin.com/company/escoladomeioambiente"
   },
   {
     "company": "Ultraviolette",
