@@ -1,7 +1,8 @@
 """CLI: python -m collector {setup,sync,leaders}
 
 Deals come from the Apify actors listed in sources.json (funding-rounds database,
-Inc42/YourStory and Entrackr news). Kept: Series A-or-later rounds and M&A.
+Inc42/YourStory and Entrackr news). Kept: Series A-or-later rounds, M&A and IPOs.
+Each company's LinkedIn page is found via its website or a Google search.
 
 Environment:
   APIFY_TOKEN            Apify API token
@@ -15,6 +16,8 @@ Environment:
   COUNTRY                Keep deals in this country when a source reports one (default India)
   MIN_UNLABELED_USD      Keep rounds with no stage label if at least this big (default 10000000)
   INR_PER_USD            Rate for amounts reported in rupees (default 88)
+  LINKEDIN_LOOKUP        "off" to skip finding LinkedIn pages (default on)
+  GOOGLE_SEARCH_ACTOR    Apify actor for the LinkedIn search (default apify/google-search-scraper)
 """
 
 import argparse
@@ -24,13 +27,14 @@ import sys
 from datetime import date
 from pathlib import Path
 
-from . import airtable, apify, leaders, sources
+from . import airtable, apify, leaders, linkedin, sources
 from .normalize import normalize, parse_date, still_valid
 from .schema import (FUNDING_FIELDS, FUNDING_TABLE, IPO, LEADERS_FIELDS, LEADERS_TABLE, MNA,
                      FundingRecord)
 
 ROOT = Path(__file__).resolve().parent.parent
 SNAPSHOT = ROOT / "data" / "funding_rounds.json"
+LINKEDIN_CACHE = ROOT / "data" / "linkedin.json"
 REPORTS = ROOT / "reports"
 
 
@@ -116,6 +120,17 @@ def cmd_sync(args):
         merged[rec.key] = rec.merge(merged[rec.key]) if rec.key in merged else rec
     records = sorted(merged.values(), key=lambda r: (r.round_date or date.min), reverse=True)
 
+    if os.environ.get("LINKEDIN_LOOKUP", "on").lower() not in ("off", "0", "false", "no"):
+        cache = linkedin.load_cache(LINKEDIN_CACHE)
+        actor = os.environ.get("GOOGLE_SEARCH_ACTOR") or linkedin.GOOGLE_ACTOR
+        stats = linkedin.enrich(
+            records, cache, token=_env("APIFY_TOKEN", required=False), today=today,
+            search=lambda token, names: linkedin.google_search(token, names, actor))
+        linkedin.save_cache(LINKEDIN_CACHE, cache)
+        have = sum(bool(r.linkedin_url) for r in records)
+        print(f"LinkedIn: {have}/{len(records)} deals have a page (new: {stats['website']} "
+              f"from websites, {stats['google']} from Google; {stats['missed']} not found)")
+
     SNAPSHOT.parent.mkdir(exist_ok=True)
     SNAPSHOT.write_text(json.dumps([r.to_dict() for r in records], indent=2) + "\n")
     n_mna = sum(r.deal_type == MNA for r in records)
@@ -169,11 +184,13 @@ def cmd_leaders(args):
 
 def cmd_inspect(args):
     token = _env("APIFY_TOKEN")
-    for source in json.loads(Path(args.sources).read_text()):
+    actors = [s["actor"] for s in json.loads(Path(args.sources).read_text())]
+    actors.append(os.environ.get("GOOGLE_SEARCH_ACTOR") or linkedin.GOOGLE_ACTOR)
+    for actor in actors:
         try:
-            print(apify.describe_actor(token, source["actor"]))
+            print(apify.describe_actor(token, actor))
         except Exception as exc:  # noqa: BLE001 - report and continue with the next actor
-            print(f"=== {source['actor']}\n  could not inspect: {exc}")
+            print(f"=== {actor}\n  could not inspect: {exc}")
         print()
 
 

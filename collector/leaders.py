@@ -76,6 +76,7 @@ def rank(records: list, start: date, end: date, top: int = 25) -> list:
             "raised_in_period_usd": e["raised"],
             "backed_by": e["investors"],
             "tracxn_url": latest.tracxn_url,
+            "linkedin_url": latest.linkedin_url,
             "round_date": latest.round_date,
             "post_date": latest.post_date,
         })
@@ -110,6 +111,7 @@ def to_airtable(rows: list, label: str) -> list:
             "Last Funding Date": _iso(r.get("round_date")),
             "Post Date": _iso(r.get("post_date")),
             "Backed By": ", ".join(r["backed_by"]),
+            "LinkedIn URL": r.get("linkedin_url") or None,
             "Tracxn URL": r["tracxn_url"] or None,
         }
         out.append({k: v for k, v in fields.items() if v not in (None, "")})
@@ -129,6 +131,10 @@ def _iso(d):
     return d.isoformat() if d else None
 
 
+def _name(company: str, linkedin_url: str) -> str:
+    return f"[{company}]({linkedin_url})" if linkedin_url else company
+
+
 def _link(d) -> str:
     return f"[{d.source or 'link'}]({d.source_url})" if d.source_url else (d.source or "—")
 
@@ -140,7 +146,8 @@ def to_markdown(rows: list, label: str, deals: list = (), ipo_deals: list = ()) 
              "|---|---|---|---|---|---|---|---|---|"]
     for r in rows:
         lines.append(
-            f"| {r['rank']} | {r['company']} | {r['employee_band'] or '—'} | "
+            f"| {r['rank']} | {_name(r['company'], r.get('linkedin_url'))} | "
+            f"{r['employee_band'] or '—'} | "
             f"{r['stage'] or '—'} | {_money(r['last_amount_usd'])} | "
             f"{_money(r['raised_in_period_usd'])} | {', '.join(r['backed_by']) or '—'} | "
             f"{_iso(r.get('round_date')) or '—'} | {_iso(r.get('post_date')) or '—'} |")
@@ -150,7 +157,8 @@ def to_markdown(rows: list, label: str, deals: list = (), ipo_deals: list = ()) 
                   "|---|---|---|---|---|---|---|"]
         for d in deals:
             lines.append(
-                f"| {d.round_date.isoformat()} | {d.company} | {d.acquirer or '—'} | "
+                f"| {d.round_date.isoformat()} | {_name(d.company, d.linkedin_url)} | "
+                f"{d.acquirer or '—'} | "
                 f"{_money(d.amount_usd)} | {d.employee_band or '—'} | "
                 f"{_iso(d.post_date) or '—'} | {_link(d)} |")
     if ipo_deals:
@@ -159,6 +167,7 @@ def to_markdown(rows: list, label: str, deals: list = (), ipo_deals: list = ()) 
                   "|---|---|---|---|---|"]
         for d in ipo_deals:
             lines.append(
-                f"| {d.round_date.isoformat()} | {d.company} | {_money(d.amount_usd)} | "
+                f"| {d.round_date.isoformat()} | {_name(d.company, d.linkedin_url)} | "
+                f"{_money(d.amount_usd)} | "
                 f"{_iso(d.post_date) or '—'} | {_link(d)} |")
     return "\n".join(lines) + "\n"

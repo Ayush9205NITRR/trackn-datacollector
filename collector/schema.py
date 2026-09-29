@@ -21,6 +21,7 @@ FUNDING_FIELDS = [
     {"name": "Company", "type": "singleLineText"},
     {"name": "Deal Type", "type": "singleLineText"},
     {"name": "Domain", "type": "singleLineText"},
+    {"name": "LinkedIn URL", "type": "url"},
     {"name": "Tracxn URL", "type": "url"},
     {"name": "Sector", "type": "singleLineText"},
     {"name": "Location", "type": "singleLineText"},
@@ -53,6 +54,7 @@ LEADERS_FIELDS = [
     {"name": "Last Funding Date", "type": "date", "options": _ISO_DATE},
     {"name": "Post Date", "type": "date", "options": _ISO_DATE},
     {"name": "Backed By", "type": "multilineText"},
+    {"name": "LinkedIn URL", "type": "url"},
     {"name": "Tracxn URL", "type": "url"},
 ]
 
@@ -93,6 +95,7 @@ class FundingRecord:
     source_url: str = ""
     post_date: Optional[date] = None  # when the news article / announcement was published
     headline: str = ""
+    linkedin_url: str = ""
 
     @property
     def ident(self) -> str:
@@ -135,6 +138,7 @@ class FundingRecord:
             "Company": self.company,
             "Deal Type": self.deal_type,
             "Domain": self.domain,
+            "LinkedIn URL": self.linkedin_url or None,
             "Tracxn URL": self.tracxn_url or None,
             "Sector": self.sector,
             "Location": self.location,

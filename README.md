@@ -73,6 +73,22 @@ Optional repository variables: `START_DATE` (default `2026-04-01`), `COUNTRY`
   into one row: investors are combined, and gaps (employees, domain, link) are
   filled from whichever source has them. Amounts in rupees are converted to USD.
 
+## LinkedIn pages
+
+Each sync finds the company's LinkedIn page (**LinkedIn URL** column, and company
+names in the reports link to it), without scraping LinkedIn itself:
+
+1. **Company website** — when a source gives the domain, the homepage's
+   `linkedin.com/company/...` link (usually in the footer).
+2. **Google search** via Apify's `apify/google-search-scraper`:
+   `"Company" site:linkedin.com/company`, keeping only a result whose page title
+   or URL matches the company name. When the result snippet states the company
+   size ("201-500 employees"), it also fills a missing **Employee Size Band**.
+
+Lookups are cached in `data/linkedin.json`, so each company is searched once
+(one Google query per new company); misses are retried after 30 days. To fix a
+wrong match, edit its entry there. `LINKEDIN_LOOKUP=off` turns this off.
+
 ## Reports
 
 `sync` writes to `reports/` and to the Monthly Leaders table:
@@ -120,14 +136,14 @@ python -m collector sync --from-file dataset.json --no-airtable   # offline test
 
 ## Airtable tables
 
-**Tracxn Database** (deals) — Record Key, Company, Deal Type, Domain, Tracxn URL,
+**Tracxn Database** (deals) — Record Key, Company, Deal Type, Domain, LinkedIn URL, Tracxn URL,
 Sector, Location, Country, Employee Size Band, Funding Stage, Last Funding Amount
 (USD), Last Funding Date, Post Date, Backed By, Acquirer, Total Funding (USD), Month, Quarter
 (FY), Source, Source URL, Last Synced.
 
 **Monthly Leaders** — Period, Rank, Company, Employee Size Band, Funding Stage,
 Last Funding Amount (USD), Raised In Period (USD), Last Funding Date, Post Date,
-Backed By, Tracxn URL.
+Backed By, LinkedIn URL, Tracxn URL.
 
 ## Tests
 

@@ -12,7 +12,7 @@ from datetime import date, datetime, timezone
 from email.utils import parsedate_to_datetime
 from typing import Iterable, Optional
 
-from .schema import FUNDING, IPO, MNA, FundingRecord
+from .schema import FUNDING, IPO, MNA, FundingRecord, company_ident
 
 FIELD_ALIASES = {
     "company": ["companyName", "company_name", "company", "startupName", "startup",
@@ -212,6 +212,20 @@ def _clean_name(text: str) -> str:
     return re.sub(r"['’]s$", "", text).strip(" .,'\"‘’“”")
 
 
+def _headline_spelling(company: str, headline: str) -> str:
+    """Feeds Title-case or flatten names ("Nse", "Simaai"); use the headline's own
+    spelling ("NSE", "SiMa.ai") when a run of its words is the same name."""
+    want = company_ident(company)
+    words = headline.split()
+    for size in range(1, 5):
+        for i in range(len(words) - size + 1):
+            span = " ".join(words[i:i + size]).strip(" ,:;'\"‘’“”")
+            span = re.sub(r"['’]s$", "", span)
+            if company_ident(span) == want:
+                return span
+    return company
+
+
 def is_series_a_plus(stage: str) -> bool:
     stage = stage or ""
     if re.search(r"pre[-\s]?ipo", stage, re.I):
@@ -300,10 +314,7 @@ def normalize_item(item: dict) -> Optional[FundingRecord]:
         return None
     if headline:  # news feeds often keep the descriptor: "Enterprise AI Startup Ema"
         company = _clean_name(str(company)) or company
-        # Feeds Title-case names ("Nse"); keep the headline's casing when it's there.
-        at = headline.lower().find(str(company).lower())
-        if at >= 0:
-            company = headline[at:at + len(str(company))]
+        company = _headline_spelling(str(company), headline)
 
     amount = _pick(item, "amount")
     if isinstance(amount, (int, float)) and item.get("_amount_multiplier"):

@@ -105,7 +105,7 @@ class PipelineTest(unittest.TestCase):
     def test_keeps_only_series_a_plus_and_mna_in_period_and_country(self):
         self.assertEqual(sorted(self.by_name), sorted([
             "Acme Robotics Pvt Ltd", "Byte Pay", "Cloudnest", "PayZen", "Blinkit", "Lernify",
-            "Simaai", "EverBrands", "NSE", "Balwaan Krishi", "Fisdom"]))
+            "SiMa.ai", "EverBrands", "NSE", "Balwaan Krishi", "Fisdom"]))
         # Seed (Byte Pay's), Pre-Series A (Kiddo), pre-FY (Old News), US (Globex),
         # non-deal news (Swiggy CFO), stake sales (Mastercard), rights issues (Ola),
         # VC fund closes (WEH Ventures) and failed scrapes are all dropped.
@@ -128,7 +128,7 @@ class PipelineTest(unittest.TestCase):
         self.assertEqual(acme.source, "datahyena, inc42-yourstory")
 
     def test_news_amount_in_millions_and_descriptor_name(self):
-        sima = self.by_name["Simaai"]
+        sima = self.by_name["SiMa.ai"]
         self.assertEqual((sima.amount_usd, sima.stage), (150e6, "Series C"))
 
     def test_mna_from_headlines(self):
@@ -146,7 +146,7 @@ class PipelineTest(unittest.TestCase):
         self.assertEqual(label, "FY27 Q1–Q2")
         rows = leaders.rank(self.records, start, end)
         self.assertEqual([r["company"] for r in rows],
-                         ["Simaai", "Cloudnest", "Acme Robotics Pvt Ltd", "PayZen", "Byte Pay",
+                         ["SiMa.ai", "Cloudnest", "Acme Robotics Pvt Ltd", "PayZen", "Byte Pay",
                           "Balwaan Krishi"])
         acme = rows[2]
         self.assertEqual((acme["employee_band"], acme["stage"], acme["last_amount_usd"]),
