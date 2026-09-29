@@ -1,6 +1,7 @@
 # trackn-datacollector
 
-Finds **every Indian company that raised Series A or later, or went through M&A**,
+Finds **every Indian company that raised Series A or later, went through M&A, or
+filed for / completed an IPO**,
 from the start of the financial year (FY27 = from 1 Apr 2026), keeps them in the
 **Tracxn Database** Airtable table, and answers "who had the best quarter":
 the companies that raised the most, with employee size band, last funding amount,
@@ -12,9 +13,9 @@ No company list needed: deals are discovered from Apify actors.
 sources.json ──> Apify actors ──────────────────────────────┐
   datahyena/company-funding-rounds   (funding-rounds database: backfill)
   nexgendata/india-startup-funding-tracker  (Inc42 + YourStory news)
-  nesora/india-startup-funding-tracker      (Entrackr news: funding + M&A)
+  nesora/india-startup-funding-tracker      (Entrackr news: funding, M&A, IPO)
                                                              ▼
-normalize ─> keep Series A+ & M&A, India, since 1 Apr ─> merge duplicates across sources
+normalize ─> keep Series A+, M&A & IPO, India, since 1 Apr ─> merge duplicates across sources
     ─> data/funding_rounds.json ─> Airtable "Tracxn Database"
     └─> rank last month / last FY quarter / FY to date ─> reports/*.md + Airtable "Monthly Leaders"
 ```
@@ -62,6 +63,11 @@ Optional repository variables: `START_DATE` (default `2026-04-01`), `COUNTRY`
 - **M&A**: deals a source marks as acquisitions/mergers, and news headlines like
   "Zomato acquires quick commerce startup Blinkit for $568 Mn" or "X acquired by Y"
   (target = the company, acquirer in its own column).
+- **IPO**: DRHP filings, IPO openings and listings (issue size as the amount).
+  Pre-IPO rounds count as funding. Dropped: stake sales/exits, rights issues,
+  VC fund closes.
+- **Post Date**: when the news article was published (the earliest one when
+  several sources report the same deal), next to the deal's own date.
 - Only deals dated from `START_DATE`, in `COUNTRY` when the source reports a country.
 - The same deal from several sources (same company, round and month) is merged
   into one row: investors are combined, and gaps (employees, domain, link) are
@@ -75,8 +81,8 @@ Optional repository variables: `START_DATE` (default `2026-04-01`), `COUNTRY`
 - `leaders_FY27_Q1.md` — last completed FY quarter (FY27 Q1 = Apr–Jun, Q2 = Jul–Sep)
 - `leaders_FY27_YTD.md` — the financial year so far (= Q1–Q2 FY27 at the end of September)
 
-Each lists the top funded companies (ranked by total raised in the period) and the
-M&A deals in it. Any range on demand:
+Each lists the top funded companies (ranked by total raised in the period), then
+the M&A deals and IPOs in it, each with its post date and source link. Any range on demand:
 
 ```bash
 python -m collector leaders --from 2026-04-01 --to 2026-09-30   # FY27 Q1–Q2
@@ -99,9 +105,13 @@ python -m collector sync --from-file dataset.json --no-airtable   # offline test
 
 ## Limits
 
-- **News sources only reach back a few weeks** (they read RSS feeds). The April–
-  September backfill depends on the datahyena database; after that, weekly runs
-  catch new deals from all three sources.
+- **News sources only reach back a few weeks** (they read RSS feeds, ~20–100
+  latest stories). The April–September backfill depends on the datahyena
+  database, which is charged per record: **free Apify accounts get a one-time
+  50-record sample**, so the backfill needs a paid Apify plan. Weekly runs catch
+  new deals from the news sources either way, and the history builds up.
+- Run `python -m collector inspect` (or the *Inspect Apify actors* workflow) to
+  print each actor's real input fields and its last run log.
 - Coverage is what these sources report — deals no one wrote about are missed,
   and headline-only M&A items may lack amount and employee size.
 - **Employee size band** comes from sources that carry headcount (datahyena).
@@ -112,11 +122,12 @@ python -m collector sync --from-file dataset.json --no-airtable   # offline test
 
 **Tracxn Database** (deals) — Record Key, Company, Deal Type, Domain, Tracxn URL,
 Sector, Location, Country, Employee Size Band, Funding Stage, Last Funding Amount
-(USD), Last Funding Date, Backed By, Acquirer, Total Funding (USD), Month, Quarter
+(USD), Last Funding Date, Post Date, Backed By, Acquirer, Total Funding (USD), Month, Quarter
 (FY), Source, Source URL, Last Synced.
 
 **Monthly Leaders** — Period, Rank, Company, Employee Size Band, Funding Stage,
-Last Funding Amount (USD), Raised In Period (USD), Backed By, Tracxn URL.
+Last Funding Amount (USD), Raised In Period (USD), Last Funding Date, Post Date,
+Backed By, Tracxn URL.
 
 ## Tests
 

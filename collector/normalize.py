@@ -183,7 +183,7 @@ _SERIES = re.compile(r"\bseries\s*[a-z]\d*\b|growth|late[-\s]stage|private equit
                      r"\bpe\b|mezzanine|secondary|buyout|corporate round", re.I)
 _NOT_A_PLUS = re.compile(r"pre[-\s]?series|seed|angel|grant|debt|convertible|"
                          r"crowdfund|\bipo\b", re.I)
-_MNA_TYPE = re.compile(r"acqui|merger|\bm\s*&\s*a\b|takeover", re.I)
+_MNA_TYPE = re.compile(r"acqui|merger|\bm\s*&\s*a\b|^\s*ma\s*$|takeover", re.I)
 _MNA_HEADLINE = re.compile(r"\b(acquires?|acquired|acquisition|acqui-?hires?|merges?|"
                            r"merger|buys|takes over|takeover)\b", re.I)
 _FUNDING_HEADLINE = re.compile(r"\b(raises?|raised|secures?|bags?|gets|funding|"
@@ -278,11 +278,12 @@ def normalize_item(item: dict) -> Optional[FundingRecord]:
         return None
     company = _pick(item, "company")
     acquirer = str(_pick(item, "acquirer") or "")
-    if deal_type == MNA and headline and not (company and acquirer):
+    if deal_type == MNA and headline and not acquirer:
+        # The headline says who bought whom; a feed's "company" may be either side.
         m = _ACQUIRES.search(headline) or _ACQUIRED_BY.search(headline)
         if m:
-            company = company or _clean_name(m.group("target"))
-            acquirer = acquirer or _clean_name(m.group("acq"))
+            company = _clean_name(m.group("target")) or company
+            acquirer = _clean_name(m.group("acq"))
     if not company and headline and (m := _RAISES.search(headline)):
         company = _clean_name(m.group("company"))
     if deal_type == IPO:  # "AceVector’s IPO", "EverBrands files DRHP..." -> company

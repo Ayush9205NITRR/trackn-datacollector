@@ -3,23 +3,10 @@
     "name": "datahyena",
     "actor": "datahyena/company-funding-rounds",
     "enabled": true,
-    "note": "Funding-rounds database: backfill of Indian Series A+ rounds for the whole period. Check input field names against the actor's Input tab.",
+    "note": "Funding-rounds database: the only source that reaches back to 1 Apr. Charged per record; free Apify accounts get a one-time 50-record sample, so the backfill needs a paid Apify plan. Stage/country are also filtered by the collector.",
     "input": {
-      "country": "India",
-      "rounds": [
-        "Series A",
-        "Series B",
-        "Series C",
-        "Series D",
-        "Series E",
-        "Series F",
-        "Series G",
-        "Series H",
-        "Private Equity",
-        "Growth"
-      ],
-      "announcedFrom": "{since}",
-      "announcedTo": "{until}",
+      "since": "{since}",
+      "countries": ["India"],
       "maxItems": 5000
     }
   },
@@ -27,9 +14,8 @@
     "name": "inc42-yourstory",
     "actor": "nexgendata/india-startup-funding-tracker",
     "enabled": true,
-    "note": "Inc42 + YourStory funding news (RSS: recent weeks only). Check input field names against the actor's Input tab.",
+    "note": "Inc42 + YourStory funding news from RSS (latest stories only).",
     "input": {
-      "daysBack": "{days_back}",
       "maxResults": 500
     }
   },
@@ -37,11 +23,13 @@
     "name": "entrackr",
     "actor": "nesora/india-startup-funding-tracker",
     "enabled": true,
-    "note": "Entrackr news feed: funding + M&A headlines (RSS: recent weeks only). amountUsd is reported in millions.",
+    "note": "Entrackr news: funding, M&A ('ma') and IPO. RSS holds ~100 latest stories. amountUsd is reported in millions.",
+    "amount_multiplier": 1000000,
     "input": {
-      "maxItems": 1000
-    },
-    "amount_multiplier": 1000000
+      "daysBack": "{days_back}",
+      "newsCategories": ["funding", "ma", "ipo"],
+      "maxResults": 500
+    }
   },
   {
     "name": "tracxn-profiles",

@@ -105,7 +105,7 @@ class PipelineTest(unittest.TestCase):
     def test_keeps_only_series_a_plus_and_mna_in_period_and_country(self):
         self.assertEqual(sorted(self.by_name), sorted([
             "Acme Robotics Pvt Ltd", "Byte Pay", "Cloudnest", "PayZen", "Blinkit", "Lernify",
-            "Simaai", "EverBrands", "NSE", "Balwaan Krishi"]))
+            "Simaai", "EverBrands", "NSE", "Balwaan Krishi", "Fisdom"]))
         # Seed (Byte Pay's), Pre-Series A (Kiddo), pre-FY (Old News), US (Globex),
         # non-deal news (Swiggy CFO), stake sales (Mastercard), rights issues (Ola),
         # VC fund closes (WEH Ventures) and failed scrapes are all dropped.
@@ -137,6 +137,9 @@ class PipelineTest(unittest.TestCase):
         self.assertEqual(blinkit.amount_usd, 568e6)
         self.assertEqual((lernify.deal_type, lernify.acquirer), (MNA, "upGrad"))
         self.assertEqual(self.by_name["PayZen"].investors, ["Peak XV"])
+        # Entrackr's "ma" category; its company field names the acquirer
+        fisdom = self.by_name["Fisdom"]
+        self.assertEqual((fisdom.deal_type, fisdom.acquirer, fisdom.amount_usd), (MNA, "Groww", 20e6))
 
     def test_fy27_h1_leaders(self):
         label, start, end = leaders.custom_bounds(*FY27_H1)
@@ -150,7 +153,7 @@ class PipelineTest(unittest.TestCase):
                          ("51-200", "Series B", 40e6))
         self.assertEqual(acme["backed_by"], ["Sequoia", "Accel", "Y Combinator"])
         deals = leaders.mna(self.records, start, end)
-        self.assertEqual([d.company for d in deals], ["Lernify", "Blinkit"])
+        self.assertEqual([d.company for d in deals], ["Fisdom", "Lernify", "Blinkit"])
         ipo_deals = leaders.ipos(self.records, start, end)
         self.assertEqual([d.company for d in ipo_deals], ["EverBrands", "NSE"])
         md = leaders.to_markdown(rows, label, deals, ipo_deals)

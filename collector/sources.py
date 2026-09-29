@@ -20,7 +20,7 @@ def load(path: Path) -> list:
 
 
 def fill(value, since: date, until: date):
-    days_back = (date.today() - since).days + 1
+    days_back = min((date.today() - since).days + 1, 365)  # actors cap this at a year
     if isinstance(value, dict):
         return {k: fill(v, since, until) for k, v in value.items()}
     if isinstance(value, list):
