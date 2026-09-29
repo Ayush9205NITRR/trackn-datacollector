@@ -42,7 +42,18 @@ def _env(name: str, required: bool = True) -> str:
 
 
 def _airtable_token() -> str:
-    return _env("AIRTABLE_PAT", required=False) or _env("AIRTABLE_TOKEN")
+    raw = _env("AIRTABLE_PAT", required=False) or _env("AIRTABLE_TOKEN")
+    token = raw.strip().strip("'\"")
+    if token.lower().startswith("bearer "):
+        token = token[7:].strip()
+    # Describe the token's shape (never its value) so a bad paste is easy to spot.
+    print(f"Airtable token: {len(token)} chars, starts with {token[:3]!r}, "
+          f"{'contains' if any(c.isspace() for c in token) else 'no'} whitespace"
+          f"{', had quotes/Bearer stripped' if token != raw.strip() else ''}")
+    if not token.startswith("pat"):
+        print("WARNING: Airtable personal access tokens start with 'pat' "
+              "(legacy 'key...' API keys no longer work)")
+    return token
 
 
 def _tables() -> tuple:
@@ -174,7 +185,17 @@ def main(argv=None):
     s.set_defaults(func=cmd_leaders)
 
     args = p.parse_args(argv)
-    args.func(args)
+    try:
+        args.func(args)
+    except RuntimeError as exc:
+        if "api.airtable.com" in str(exc) and "-> 401" in str(exc):
+            sys.exit(f"{exc}\n\nAirtable rejected the token. Check the AIRTABLE_PAT secret: "
+                     "paste only the token (patXXXX.XXXX...), no quotes or 'Bearer'.")
+        if "api.airtable.com" in str(exc) and "-> 403" in str(exc):
+            sys.exit(f"{exc}\n\nThe token works but can't access this base. In Airtable's "
+                     "token settings add the Tracxn Database base and the scopes "
+                     "data.records:read/write and schema.bases:read/write.")
+        raise
 
 
 if __name__ == "__main__":
