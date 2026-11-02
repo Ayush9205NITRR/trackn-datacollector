@@ -1,5 +1,229 @@
 [
   {
+    "company": "ValueQuest Tristar Fund",
+    "round_date": "2026-11-02",
+    "amount_usd": 252000000.0,
+    "stage": "",
+    "investors": [],
+    "employee_band": "",
+    "domain": "",
+    "tracxn_url": "",
+    "sector": "",
+    "location": "",
+    "total_funding_usd": null,
+    "deal_type": "Funding",
+    "acquirer": "",
+    "country": "",
+    "source": "inc42-yourstory",
+    "source_url": "https://yourstory.com/2026/11/funding-valuequest-tristar-fund-beats-target-greenshoe-15-months-first-close",
+    "post_date": "2026-11-02",
+    "headline": "ValueQuest Tristar Fund raises over Rs 2,100 Cr for advanced manufacturing",
+    "linkedin_url": ""
+  },
+  {
+    "company": "Two Point O",
+    "round_date": "2026-11-02",
+    "amount_usd": 10000000.0,
+    "stage": "",
+    "investors": [
+      "Transition Venture Capital Two Point"
+    ],
+    "employee_band": "",
+    "domain": "",
+    "tracxn_url": "",
+    "sector": "",
+    "location": "",
+    "total_funding_usd": null,
+    "deal_type": "Funding",
+    "acquirer": "",
+    "country": "",
+    "source": "inc42-yourstory",
+    "source_url": "https://yourstory.com/2026/11/two-point-o-raises-10-million-led-by-transition-venture-capital",
+    "post_date": "2026-11-02",
+    "headline": "Two Point O raises $10M led by Transition Venture Capital",
+    "linkedin_url": "https://www.linkedin.com/company/two-point-o-capital"
+  },
+  {
+    "company": "Two Point O Capital",
+    "round_date": "2026-11-02",
+    "amount_usd": 10000000.0,
+    "stage": "",
+    "investors": [
+      "Transition VC"
+    ],
+    "employee_band": "",
+    "domain": "",
+    "tracxn_url": "",
+    "sector": "",
+    "location": "",
+    "total_funding_usd": null,
+    "deal_type": "Funding",
+    "acquirer": "",
+    "country": "",
+    "source": "entrackr",
+    "source_url": "https://entrackr.com/news/clean-energy-deployment-platform-two-point-o-capital-raises-10-mn-led-by-transition-vc-12775140",
+    "post_date": "2026-11-02",
+    "headline": "Clean energy deployment platform Two Point O Capital raises $10 Mn led by Transition VC",
+    "linkedin_url": ""
+  },
+  {
+    "company": "Jio Platforms",
+    "round_date": "2026-10-28",
+    "amount_usd": 20000.0,
+    "stage": "",
+    "investors": [],
+    "employee_band": "",
+    "domain": "",
+    "tracxn_url": "",
+    "sector": "",
+    "location": "",
+    "total_funding_usd": null,
+    "deal_type": "IPO",
+    "acquirer": "",
+    "country": "",
+    "source": "entrackr",
+    "source_url": "https://entrackr.com/news/jio-platforms-lists-at-21-premium-values-company-at-rs-125-lakh-crore-12759885",
+    "post_date": "2026-10-28",
+    "headline": "Jio Platforms lists at 21% premium, values company at Rs 12.5 lakh crore",
+    "linkedin_url": "https://www.linkedin.com/company/jioplatforms"
+  },
+  {
+    "company": "Simplismart",
+    "round_date": "2026-10-27",
+    "amount_usd": 14000000.0,
+    "stage": "",
+    "investors": [
+      "Dallas Venture Capital"
+    ],
+    "employee_band": "",
+    "domain": "",
+    "tracxn_url": "",
+    "sector": "",
+    "location": "",
+    "total_funding_usd": null,
+    "deal_type": "Funding",
+    "acquirer": "",
+    "country": "",
+    "source": "entrackr",
+    "source_url": "https://entrackr.com/news/simplismart-raises-14-mn-from-dallas-venture-capital-nvidia-and-others-12758191",
+    "post_date": "2026-10-27",
+    "headline": "Simplismart raises $14 Mn from Dallas Venture Capital, NVIDIA and others",
+    "linkedin_url": "https://www.linkedin.com/company/simplismart"
+  },
+  {
+    "company": "Medsee",
+    "round_date": "2026-10-27",
+    "amount_usd": 15000000.0,
+    "stage": "",
+    "investors": [
+      "Blume"
+    ],
+    "employee_band": "",
+    "domain": "",
+    "tracxn_url": "",
+    "sector": "",
+    "location": "",
+    "total_funding_usd": null,
+    "deal_type": "M&A",
+    "acquirer": "Cent raises $15 Mn led by Blume",
+    "country": "",
+    "source": "entrackr",
+    "source_url": "https://entrackr.com/news/practo-co-founder-shashank-nds-startup-cent-raises-15-mn-led-by-blume-acquires-medsee-12757196",
+    "post_date": "2026-10-27",
+    "headline": "Practo co-founder Shashank ND\u2019s startup Cent raises $15 Mn led by Blume, acquires Medsee",
+    "linkedin_url": "https://www.linkedin.com/company/medsee-ai"
+  },
+  {
+    "company": "Rotoris",
+    "round_date": "2026-10-27",
+    "amount_usd": 8430000.0,
+    "stage": "Series A",
+    "investors": [
+      "Blume Ventures"
+    ],
+    "employee_band": "",
+    "domain": "",
+    "tracxn_url": "",
+    "sector": "",
+    "location": "",
+    "total_funding_usd": null,
+    "deal_type": "Funding",
+    "acquirer": "",
+    "country": "",
+    "source": "entrackr",
+    "source_url": "https://entrackr.com/news/luxury-watch-brand-rotoris-raises-rs-70-cr-in-series-a-round-led-by-blume-ventures-12757062",
+    "post_date": "2026-10-27",
+    "headline": "Luxury watch brand Rotoris raises Rs 70 Cr in Series A round led by Blume Ventures",
+    "linkedin_url": "https://www.linkedin.com/company/rotoris"
+  },
+  {
+    "company": "Matiks",
+    "round_date": "2026-10-26",
+    "amount_usd": 10000000.0,
+    "stage": "Series A",
+    "investors": [
+      "General Catalyst"
+    ],
+    "employee_band": "",
+    "domain": "",
+    "tracxn_url": "",
+    "sector": "",
+    "location": "",
+    "total_funding_usd": null,
+    "deal_type": "Funding",
+    "acquirer": "",
+    "country": "",
+    "source": "entrackr",
+    "source_url": "https://entrackr.com/news/social-gaming-startup-matiks-raises-10-mn-in-pre-series-a-led-by-general-catalyst-12754114",
+    "post_date": "2026-10-26",
+    "headline": "Social gaming startup Matiks raises $10 Mn in Pre-Series A led by General Catalyst",
+    "linkedin_url": "https://www.linkedin.com/company/matiksplay"
+  },
+  {
+    "company": "Zetwerk",
+    "round_date": "2026-10-23",
+    "amount_usd": null,
+    "stage": "",
+    "investors": [],
+    "employee_band": "",
+    "domain": "",
+    "tracxn_url": "",
+    "sector": "",
+    "location": "",
+    "total_funding_usd": null,
+    "deal_type": "IPO",
+    "acquirer": "",
+    "country": "",
+    "source": "entrackr",
+    "source_url": "https://entrackr.com/news/zetwerk-shares-list-at-over-5-premium-in-stock-market-debut-12740395",
+    "post_date": "2026-10-23",
+    "headline": "Zetwerk shares list at over 5% premium in stock market debut",
+    "linkedin_url": "https://www.linkedin.com/company/zetwerk-in"
+  },
+  {
+    "company": "CureBay",
+    "round_date": "2026-10-22",
+    "amount_usd": 12050000.0,
+    "stage": "Series C",
+    "investors": [
+      "IvyCap"
+    ],
+    "employee_band": "",
+    "domain": "",
+    "tracxn_url": "",
+    "sector": "",
+    "location": "",
+    "total_funding_usd": null,
+    "deal_type": "Funding",
+    "acquirer": "",
+    "country": "",
+    "source": "entrackr",
+    "source_url": "https://entrackr.com/news/rural-healthcare-startup-curebay-raises-rs-100-cr-in-pre-series-c-led-by-ivycap-12705651",
+    "post_date": "2026-10-22",
+    "headline": "Rural healthcare startup CureBay raises Rs 100 Cr in Pre-Series C led by IvyCap",
+    "linkedin_url": "https://www.linkedin.com/company/curebayofficial"
+  },
+  {
     "company": "AceVector",
     "round_date": "2026-09-29",
     "amount_usd": 22770000.0,
@@ -18,7 +242,7 @@
     "source_url": "https://entrackr.com/news/acevectors-ipo-subscribed-over-5x-on-final-day-12590738",
     "post_date": "2026-09-25",
     "headline": "AceVector\u2019s IPO subscribed over 5X on final day",
-    "linkedin_url": ""
+    "linkedin_url": "https://www.linkedin.com/company/acevector"
   },
   {
     "company": "EverBrands",
@@ -39,7 +263,7 @@
     "source_url": "https://entrackr.com/news/subway-india-operator-everbrands-files-drhp-to-raise-rs-600-cr-via-fresh-issue-12588957",
     "post_date": "2026-09-29",
     "headline": "Subway India operator EverBrands files DRHP to raise Rs 600 Cr via fresh issue",
-    "linkedin_url": ""
+    "linkedin_url": "https://www.linkedin.com/company/everbrands-in"
   },
   {
     "company": "SiMa.ai",
@@ -83,7 +307,7 @@
     "source_url": "https://inc42.com/buzz/balwaan-krishi-bags-%e2%82%b9100-cr-to-scale-farm-equipment-manufacturing/",
     "post_date": "2026-09-28",
     "headline": "Balwaan Krishi Bags \u20b9100 Cr To Scale Farm Equipment Manufacturing",
-    "linkedin_url": ""
+    "linkedin_url": "https://www.linkedin.com/company/balwaankrishi"
   },
   {
     "company": "Moneyview",
@@ -91,7 +315,7 @@
     "amount_usd": 39400000.0,
     "stage": "",
     "investors": [],
-    "employee_band": "",
+    "employee_band": "201-500",
     "domain": "",
     "tracxn_url": "",
     "sector": "",
@@ -104,7 +328,7 @@
     "source_url": "https://entrackr.com/news/moneyview-ipo-sees-nearly-100x-subscription-on-final-day-12586923",
     "post_date": "2026-09-24",
     "headline": "Moneyview IPO sees nearly 100X subscription on final day",
-    "linkedin_url": ""
+    "linkedin_url": "https://www.linkedin.com/company/money-view"
   },
   {
     "company": "NSE",
@@ -125,7 +349,7 @@
     "source_url": "https://entrackr.com/news/nse-makes-muted-debut-lists-at-rs-1800-with-084-premium-12570096",
     "post_date": "2026-09-22",
     "headline": "NSE makes muted debut, lists at Rs 1,800 with 0.84% premium",
-    "linkedin_url": "https://www.linkedin.com/company/nse"
+    "linkedin_url": "https://www.linkedin.com/company/nse-indices-limited"
   },
   {
     "company": "Ema",
@@ -148,7 +372,7 @@
     "source_url": "https://entrackr.com/news/enterprise-ai-startup-ema-raises-77-mn-in-series-b-led-by-creaegis-12570021",
     "post_date": "2026-09-24",
     "headline": "Enterprise AI startup Ema raises $77 Mn in Series B led by Creaegis",
-    "linkedin_url": ""
+    "linkedin_url": "https://www.linkedin.com/company/ema-unlimited"
   },
   {
     "company": "Ultraviolette",
@@ -156,7 +380,7 @@
     "amount_usd": 85000000.0,
     "stage": "",
     "investors": [],
-    "employee_band": "",
+    "employee_band": "201-500",
     "domain": "",
     "tracxn_url": "",
     "sector": "",
@@ -169,6 +393,6 @@
     "source_url": "https://entrackr.com/news/ultraviolette-raises-85-mn-targets-us-expansion-in-2027-12567317",
     "post_date": "2026-09-23",
     "headline": "Ultraviolette raises $85 Mn, targets US expansion in 2027",
-    "linkedin_url": ""
+    "linkedin_url": "https://www.linkedin.com/company/ultraviolette-automotive"
   }
 ]
