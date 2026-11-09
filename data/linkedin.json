@@ -6,6 +6,20 @@
   "via": "google",
   "checked": "2026-11-02"
  },
+ "altm": {
+  "company": "altM",
+  "url": "",
+  "employee_band": "",
+  "via": "google",
+  "checked": "2026-11-09"
+ },
+ "avenuesaiq2": {
+  "company": "AvenuesAI Q2",
+  "url": "",
+  "employee_band": "",
+  "via": "google",
+  "checked": "2026-11-09"
+ },
  "balwaankrishi": {
   "company": "Balwaan Krishi",
   "url": "https://www.linkedin.com/company/balwaankrishi",
@@ -13,12 +27,26 @@
   "via": "google",
   "checked": "2026-11-02"
  },
+ "clinicsoncloud": {
+  "company": "Clinics On Cloud",
+  "url": "https://www.linkedin.com/company/clinics-on-cloud",
+  "employee_band": "",
+  "via": "google",
+  "checked": "2026-11-09"
+ },
  "curebay": {
   "company": "CureBay",
   "url": "https://www.linkedin.com/company/curebayofficial",
   "employee_band": "",
   "via": "google",
   "checked": "2026-11-02"
+ },
+ "eloelogroup": {
+  "company": "EloElo Group",
+  "url": "",
+  "employee_band": "",
+  "via": "google",
+  "checked": "2026-11-09"
  },
  "ema": {
   "company": "Ema",
@@ -34,12 +62,26 @@
   "via": "google",
   "checked": "2026-11-02"
  },
+ "giva": {
+  "company": "GIVA",
+  "url": "https://www.linkedin.com/company/giva-co",
+  "employee_band": "",
+  "via": "google",
+  "checked": "2026-11-09"
+ },
  "jioplatforms": {
   "company": "Jio Platforms",
   "url": "https://www.linkedin.com/company/jioplatforms",
   "employee_band": "",
   "via": "google",
   "checked": "2026-11-02"
+ },
+ "majoritystake": {
+  "company": "majority stake",
+  "url": "",
+  "employee_band": "",
+  "via": "google",
+  "checked": "2026-11-09"
  },
  "matiks": {
   "company": "Matiks",
@@ -68,6 +110,34 @@
   "employee_band": "",
   "via": "google",
   "checked": "2026-11-02"
+ },
+ "peppermintrobotics": {
+  "company": "Peppermint Robotics",
+  "url": "",
+  "employee_band": "",
+  "via": "google",
+  "checked": "2026-11-09"
+ },
+ "physicswallahcites": {
+  "company": "PhysicsWallah cites",
+  "url": "",
+  "employee_band": "",
+  "via": "google",
+  "checked": "2026-11-09"
+ },
+ "powerupmoney": {
+  "company": "PowerUp Money",
+  "url": "https://www.linkedin.com/company/powerup-money",
+  "employee_band": "",
+  "via": "google",
+  "checked": "2026-11-09"
+ },
+ "razorpayreceives": {
+  "company": "Razorpay receives",
+  "url": "",
+  "employee_band": "",
+  "via": "google",
+  "checked": "2026-11-09"
  },
  "rotoris": {
   "company": "Rotoris",
@@ -110,6 +180,13 @@
   "employee_band": "201-500",
   "via": "google",
   "checked": "2026-11-02"
+ },
+ "updateexclusiverapidclaimsintalksto": {
+  "company": "[Update] Exclusive: RapidClaims In Talks To",
+  "url": "",
+  "employee_band": "",
+  "via": "google",
+  "checked": "2026-11-09"
  },
  "valuequesttristarfund": {
   "company": "ValueQuest Tristar Fund",
