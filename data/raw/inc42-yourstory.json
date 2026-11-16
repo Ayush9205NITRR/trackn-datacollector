@@ -1,84 +1,54 @@
 [
  {
-  "startupName": "AvenuesAI Q2",
-  "amountUsd": 8640000,
-  "amountOriginal": "\u20b972 Cr",
-  "roundType": "growth",
+  "startupName": "Bharat Semi",
+  "amountUsd": 24000000,
+  "amountOriginal": "$24 Mn",
+  "roundType": "seed",
   "investors": [],
   "sector": null,
-  "date": "Fri, 06 Nov 2026 11:09:42 +0000",
-  "title": "AvenuesAI Q2 Net Profit Rises 6% YoY To \u20b972 Cr, Revenue Up 47%",
-  "sourceUrl": "https://inc42.com/buzz/avenuesai-q2-net-profit-rises-6-yoy-to-%e2%82%b972-cr-revenue-up-47/",
+  "date": "Mon, 16 Nov 2026 05:54:07 +0000",
+  "title": "Bharat Semi Raises $24 Mn To Build Smart Sensors For Physical AI",
+  "sourceUrl": "https://inc42.com/buzz/bharat-semi-raises-24-mn-to-build-smart-sensors-for-physical-ai/",
   "source": "Inc42",
-  "scraped_at": "2026-11-09T11:28:32Z"
+  "scraped_at": "2026-11-16T11:13:51Z"
  },
  {
-  "startupName": "Venomics AI",
-  "amountUsd": 2700000,
-  "amountOriginal": "$2.7 Mn",
-  "roundType": "pre-seed",
-  "investors": [
-   "Speciale"
-  ],
-  "sector": null,
-  "date": "Thu, 05 Nov 2026 14:46:07 +0000",
-  "title": "Venomics AI Raises $2.7 Mn To Turn Venom Into Medicine",
-  "sourceUrl": "https://inc42.com/buzz/venomics-ai-raises-2-7-mn-to-turn-venom-into-medicine/",
-  "source": "Inc42",
-  "scraped_at": "2026-11-09T11:28:32Z"
- },
- {
-  "startupName": "[Update] Exclusive: RapidClaims In Talks To",
-  "amountUsd": 30000000,
-  "amountOriginal": "$30 Mn",
+  "startupName": "FirstCry Q2",
+  "amountUsd": 1512000,
+  "amountOriginal": "\u20b912.6 Cr",
   "roundType": null,
   "investors": [],
-  "sector": "Exclusive",
-  "date": "Thu, 05 Nov 2026 12:52:14 +0000",
-  "title": "[Update] Exclusive: RapidClaims In Talks To Raise $30 Mn",
-  "sourceUrl": "https://inc42.com/buzz/rapidclaims-in-talks-to-raise-30-mn-from-westbridge-capital-others/",
+  "sector": null,
+  "date": "Sat, 14 Nov 2026 11:10:21 +0000",
+  "title": "FirstCry Q2 Net Loss Narrows 75% YoY To \u20b912.6 Cr, Revenue Up 14%",
+  "sourceUrl": "https://inc42.com/buzz/firstcry-q2-net-loss-narrows-75-yoy-to-%e2%82%b912-6-cr-revenue-up-14/",
   "source": "Inc42",
-  "scraped_at": "2026-11-09T11:28:32Z"
+  "scraped_at": "2026-11-16T11:13:51Z"
  },
  {
-  "startupName": "Spacetech Startup Cosmoserve",
-  "amountUsd": 6000000,
-  "amountOriginal": "$6 Mn",
+  "startupName": "Zelio E-Mobility\u2019s",
+  "amountUsd": 3720000,
+  "amountOriginal": "\u20b931 Cr",
+  "roundType": null,
+  "investors": [],
+  "sector": "What The Financials",
+  "date": "Fri, 13 Nov 2026 19:37:04 +0000",
+  "title": "Zelio E-Mobility\u2019s Net Profit Zooms 2.6X YoY To \u20b931 Cr In H1",
+  "sourceUrl": "https://inc42.com/buzz/zelio-e-mobilitys-net-profit-zooms-2-6x-yoy-to-%e2%82%b931-cr-in-h1/",
+  "source": "Inc42",
+  "scraped_at": "2026-11-16T11:13:52Z"
+ },
+ {
+  "startupName": "Bharat Semi",
+  "amountUsd": 24000000,
+  "amountOriginal": "$24 M",
   "roundType": "seed",
-  "investors": [
-   "Japan-based Rebright Partners. While Aranya"
-  ],
-  "sector": "Spot News",
-  "date": "Thu, 05 Nov 2026 10:40:27 +0000",
-  "title": "Spacetech Startup Cosmoserve Nets $6 Mn, Eyes Commercialisation By 2028",
-  "sourceUrl": "https://inc42.com/buzz/spacetech-startup-cosmoserve-nets-6-mn-eyes-commercialisation-by-2028/",
-  "source": "Inc42",
-  "scraped_at": "2026-11-09T11:28:33Z"
- },
- {
-  "startupName": "Marks First",
-  "amountUsd": 36000000,
-  "amountOriginal": "\u20b9300 Cr",
-  "roundType": "growth",
   "investors": [],
   "sector": null,
-  "date": "Thu, 05 Nov 2026 08:30:23 +0000",
-  "title": "Daksham Capital Launches \u20b9300 Cr Consumer Fund, Marks First Close At \u20b9125 Cr",
-  "sourceUrl": "https://inc42.com/buzz/daksham-capital-launches-%e2%82%b9300-cr-consumer-fund-marks-first-close-at-%e2%82%b9125-cr/",
-  "source": "Inc42",
-  "scraped_at": "2026-11-09T11:28:33Z"
- },
- {
-  "startupName": "Northern Arc's diversified debt fund hits first",
-  "amountUsd": 48000000,
-  "amountOriginal": "\u20b9400 Cr",
-  "roundType": "debt",
-  "investors": [],
-  "sector": null,
-  "date": "Fri, 06 Nov 2026 08:31:14 GMT",
-  "title": "Northern Arc's diversified debt fund hits first close at over Rs 400 Cr",
-  "sourceUrl": "https://yourstory.com/2026/11/northern-arcs-diversified-debt-fund-hits-first-close-at-over-rs-400-crore",
+  "date": "Mon, 16 Nov 2026 05:37:52 GMT",
+  "title": "Bharat Semi raises $24M to develop AI-enabled sensors",
+  "sourceUrl": "https://yourstory.com/2026/11/bharat-semi-raises-24m-to-develop-ai-enabled-sensors",
   "source": "YourStory",
-  "scraped_at": "2026-11-09T11:28:33Z"
+  "scraped_at": "2026-11-16T11:13:53Z"
  }
 ]

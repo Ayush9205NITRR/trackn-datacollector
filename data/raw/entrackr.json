@@ -1,5 +1,44 @@
 [
  {
+  "company": "Bharat Semi",
+  "newsCategory": "funding",
+  "roundType": "Seed",
+  "amountRaw": "$24 Mn",
+  "amountUsd": 24,
+  "amountInr": 1992000000,
+  "leadInvestor": "Info Edge",
+  "title": "Bharat Semi raises $24 Mn in seed round from Info Edge, South Park Common, others",
+  "description": "Semiconductor startup Bharat Semi has raised $24 million in a seed funding round led by Info Edge Group, South Park Commons and Indus Bridge Ventures. The round also saw participation from Micromax, Valour Capital, New York-based Gaingels and angel investors Mukul Agarwal and Karthik Sundar Iyer.\nThe fresh capital will be used to accelerate product development, expand its engineering teams in the US and strengthen its go-to-market efforts with global customers.\nFounded by Vinayak Dalmia and Vrin",
+  "publishedAt": "2026-11-16T04:48:32.000Z",
+  "articleUrl": "https://entrackr.com/news/bharat-semi-raises-24-mn-in-seed-round-from-info-edge-south-park-common-others-12812801"
+ },
+ {
+  "company": "Paytm shares",
+  "newsCategory": "ipo",
+  "roundType": "IPO",
+  "amountRaw": "",
+  "amountInr": null,
+  "amountUsd": null,
+  "leadInvestor": "",
+  "title": "Paytm shares near IPO price amid MDR rollout and 6 consecutive profitable quarters",
+  "description": "Shares of One 97 Communications, the parent company of Paytm, have been gradually moving closer to their initial public offering (IPO) price of Rs 2,150 over the past few months, supported by improving financial performance and a positive regulatory development. The stock was trading at Rs 1,939.70 on Friday, November 13, around 9.8% below its IPO price.\nThe stock could see further upside on the back of the RBI's in-principle approval for its wallet business and the expected implementation of a ",
+  "publishedAt": "2026-11-13T11:51:25.000Z",
+  "articleUrl": "https://entrackr.com/news/paytm-shares-near-ipo-price-amid-mdr-rollout-and-6-consecutive-profitable-quarters-12806928"
+ },
+ {
+  "company": "Greenjoules",
+  "newsCategory": "funding",
+  "roundType": "Series B",
+  "amountRaw": "Rs 150 Cr",
+  "amountInr": 1500000000,
+  "amountUsd": 18.07,
+  "leadInvestor": "Amazon funds",
+  "title": "Greenjoules raises Rs 150 Cr in Series B led by Amazon funds, secures Rs 100 Cr loan from TDB",
+  "description": "Pune-based renewable fuels startup Greenjoules has raised Rs 150 crore in a Series B funding round co-led by Amazon&rsquo;s Smbhav Venture Fund and Climate Pledge Fund.\nThe round also saw participation from Rainmatter, the investment arm of Zerodha, and Singularity&rsquo;s Strategic Autonomy Fund. Blue Ashva Capital, which led the company&rsquo;s Series A round in 2021, remains its largest shareholder.\nSeparately, Greenjoules has secured a Rs 100 crore loan from the Technology Development Board ",
+  "publishedAt": "2026-11-11T11:07:11.000Z",
+  "articleUrl": "https://entrackr.com/news/greenjoules-raises-rs-150-cr-in-series-b-led-by-amazon-funds-secures-rs-100-cr-loan-from-tdb-12801123"
+ },
+ {
   "company": "PhysicsWallah cites",
   "newsCategory": "ma",
   "roundType": "",
@@ -128,57 +167,5 @@
   "description": "Two Point O Capital (TW.O), an AI-powered clean energy deployment platform for commercial and industrial (C&amp;I) businesses, has raised $10 million in a funding round led by Transition Venture Capital. Existing investor Omnivore and angel investors Chiranjeev Singh Saluja and Sudhir M Reddy also participated in the round.\nThe proceeds will be used to expand into battery energy storage systems (BESS) and strengthen its presence in solar energy, energy efficiency and wastewater treatment, the co",
   "publishedAt": "2026-11-02T05:47:49.000Z",
   "articleUrl": "https://entrackr.com/news/clean-energy-deployment-platform-two-point-o-capital-raises-10-mn-led-by-transition-vc-12775140"
- },
- {
-  "company": "Bijnis Rebrands As Zorit",
-  "newsCategory": "funding",
-  "roundType": "",
-  "amountRaw": "Rs 27 Cr",
-  "amountInr": 270000000,
-  "amountUsd": 3.25,
-  "leadInvestor": "Sparrow Capital",
-  "title": "Bijnis rebrands as Zorit, raises Rs 27 Cr led by Sparrow Capital",
-  "description": "B2B quick commerce startup Zorit, formerly known as Bijnis, has raised nearly Rs 27 crore ($2.84 million) in a funding round led by Sparrow Capital. Existing investors Info Edge and WaterBridge participated in the round, along with Better Capital, angel investors and employees.\nThe angel investors include Anupam Mittal, founder of Shaadi.com, the founders of Shiprocket, Mohit Sardana, CEO of Xpressbees, and Sarthak Misra of SoftBank.\nFollowing the investment, Info Edge&rsquo;s shareholding in Bi",
-  "publishedAt": "2026-10-28T13:35:55.000Z",
-  "articleUrl": "https://entrackr.com/news/bijnis-rebrands-as-zorit-raises-rs-27-cr-led-by-sparrow-capital-12762019"
- },
- {
-  "company": "Jio Platforms",
-  "newsCategory": "ipo",
-  "roundType": "",
-  "amountRaw": "Rs 12.5 lakh",
-  "amountInr": 1250000,
-  "amountUsd": 0.02,
-  "leadInvestor": "",
-  "title": "Jio Platforms lists at 21% premium, values company at Rs 12.5 lakh crore",
-  "description": "Reliance Industries-backed Jio Platforms made a strong stock market debut on Wednesday, with its shares listing at a premium of around 21% over the issue price of Rs 1,119.\nThe shares listed at Rs 1,358 on the National Stock Exchange (NSE), giving investors a gain of Rs 239 per share. At the listing price, the company commanded a market capitalisation of around Rs 12.5 lakh crore, making it India&rsquo;s second-largest listed company by market value.\nThe listing follows Jio Platforms&rsquo; Rs 3",
-  "publishedAt": "2026-10-28T04:59:16.000Z",
-  "articleUrl": "https://entrackr.com/news/jio-platforms-lists-at-21-premium-values-company-at-rs-125-lakh-crore-12759885"
- },
- {
-  "company": "Simplismart",
-  "newsCategory": "funding",
-  "roundType": "",
-  "amountRaw": "$14 Mn",
-  "amountUsd": 14,
-  "amountInr": 1162000000,
-  "leadInvestor": "Dallas Venture Capital",
-  "title": "Simplismart raises $14 Mn from Dallas Venture Capital, NVIDIA and others",
-  "description": "AI inference infrastructure startup Simplismart has raised $14 million in a Series B funding round led by Dallas Venture Capital, with participation from NVIDIA, Accel, Shastra VC and Micromax.\nThe fresh funds will be used to strengthen its inference engine and orchestration platform, expand its cloud provider network and support its growth across North America and other global markets.\nEntrackr had earlier reported on the deal, which values the company at around $100 million post money. Previou",
-  "publishedAt": "2026-10-27T12:37:16.000Z",
-  "articleUrl": "https://entrackr.com/news/simplismart-raises-14-mn-from-dallas-venture-capital-nvidia-and-others-12758191"
- },
- {
-  "company": "Practo Co Founder Shashank Nds Startup Cent",
-  "newsCategory": "ma",
-  "roundType": "",
-  "amountRaw": "$15 Mn",
-  "amountUsd": 15,
-  "amountInr": 1245000000,
-  "leadInvestor": "Blume",
-  "title": "Practo co-founder Shashank ND\u2019s startup Cent raises $15 Mn led by Blume, acquires Medsee",
-  "description": "Preventive healthcare startup Cent has raised $15 million in a Series A funding round co-led by Blume Ventures and South Park Commons. The company has also acquired AI radiology platform Medsee.\nThe round saw participation from individual investors Arun Sarin, Srinivas Narayanan, Sharath Narayana, Aprameya Radhakrishna and Krishan Sridhar, Cent founder Shashank ND said in a LinkedIn post.\nFounded by Shashank ND, who also founded healthcare platform Practo, Cent focuses on early disease detection",
-  "publishedAt": "2026-10-27T08:26:37.000Z",
-  "articleUrl": "https://entrackr.com/news/practo-co-founder-shashank-nds-startup-cent-raises-15-mn-led-by-blume-acquires-medsee-12757196"
  }
 ]

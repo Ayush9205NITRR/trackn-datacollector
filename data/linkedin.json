@@ -69,6 +69,13 @@
   "via": "google",
   "checked": "2026-11-09"
  },
+ "greenjoules": {
+  "company": "Greenjoules",
+  "url": "https://www.linkedin.com/company/greenjoules",
+  "employee_band": "",
+  "via": "google",
+  "checked": "2026-11-16"
+ },
  "jioplatforms": {
   "company": "Jio Platforms",
   "url": "https://www.linkedin.com/company/jioplatforms",
@@ -110,6 +117,13 @@
   "employee_band": "",
   "via": "google",
   "checked": "2026-11-02"
+ },
+ "paytm": {
+  "company": "Paytm",
+  "url": "https://www.linkedin.com/company/paytm",
+  "employee_band": "",
+  "via": "google",
+  "checked": "2026-11-16"
  },
  "peppermintrobotics": {
   "company": "Peppermint Robotics",
