@@ -1,54 +1,69 @@
 [
  {
-  "startupName": "Bharat Semi",
-  "amountUsd": 24000000,
-  "amountOriginal": "$24 Mn",
-  "roundType": "seed",
+  "startupName": "Data Security Startup Matters.AI",
+  "amountUsd": 13800000,
+  "amountOriginal": "\u20b9115 Cr",
+  "roundType": "pre-series a",
   "investors": [],
-  "sector": null,
-  "date": "Mon, 16 Nov 2026 05:54:07 +0000",
-  "title": "Bharat Semi Raises $24 Mn To Build Smart Sensors For Physical AI",
-  "sourceUrl": "https://inc42.com/buzz/bharat-semi-raises-24-mn-to-build-smart-sensors-for-physical-ai/",
+  "sector": "Spot News",
+  "date": "Mon, 23 Nov 2026 11:11:38 +0000",
+  "title": "Data Security Startup Matters.AI Nets \u20b9115 Cr From Tanglin Venture Partners, Others",
+  "sourceUrl": "https://inc42.com/buzz/data-security-startup-matters-ai-nets-%e2%82%b9115-cr-from-tanglin-venture-partners-others/",
   "source": "Inc42",
-  "scraped_at": "2026-11-16T11:13:51Z"
+  "scraped_at": "2026-11-23T12:35:27Z"
  },
  {
-  "startupName": "FirstCry Q2",
-  "amountUsd": 1512000,
-  "amountOriginal": "\u20b912.6 Cr",
-  "roundType": null,
-  "investors": [],
+  "startupName": "Zavya",
+  "amountUsd": 2712000,
+  "amountOriginal": "\u20b922.6 Cr",
+  "roundType": "pre-series a",
+  "investors": [
+   "Daksham Growth"
+  ],
   "sector": null,
-  "date": "Sat, 14 Nov 2026 11:10:21 +0000",
-  "title": "FirstCry Q2 Net Loss Narrows 75% YoY To \u20b912.6 Cr, Revenue Up 14%",
-  "sourceUrl": "https://inc42.com/buzz/firstcry-q2-net-loss-narrows-75-yoy-to-%e2%82%b912-6-cr-revenue-up-14/",
+  "date": "Mon, 23 Nov 2026 11:04:56 +0000",
+  "title": "Zavya Nets \u20b922.6 Cr To Scale Everyday Silver Jewellery Biz",
+  "sourceUrl": "https://inc42.com/buzz/zavya-nets-%e2%82%b922-6-cr-to-scale-everyday-silver-jewellery-biz/",
   "source": "Inc42",
-  "scraped_at": "2026-11-16T11:13:51Z"
+  "scraped_at": "2026-11-23T12:35:27Z"
  },
  {
-  "startupName": "Zelio E-Mobility\u2019s",
-  "amountUsd": 3720000,
-  "amountOriginal": "\u20b931 Cr",
+  "startupName": "Swish FY26: Revenue Surges",
+  "amountUsd": 6000000,
+  "amountOriginal": "\u20b950 Cr",
   "roundType": null,
   "investors": [],
   "sector": "What The Financials",
-  "date": "Fri, 13 Nov 2026 19:37:04 +0000",
-  "title": "Zelio E-Mobility\u2019s Net Profit Zooms 2.6X YoY To \u20b931 Cr In H1",
-  "sourceUrl": "https://inc42.com/buzz/zelio-e-mobilitys-net-profit-zooms-2-6x-yoy-to-%e2%82%b931-cr-in-h1/",
+  "date": "Sat, 21 Nov 2026 16:15:56 +0000",
+  "title": "Swish FY26: Revenue Surges Close To \u20b950 Cr While Loss Widens To \u20b991 Cr",
+  "sourceUrl": "https://inc42.com/buzz/swish-fy26-revenue-surges-close-to-%e2%82%b950-cr-while-loss-widens-to-%e2%82%b991-cr/",
   "source": "Inc42",
-  "scraped_at": "2026-11-16T11:13:52Z"
+  "scraped_at": "2026-11-23T12:35:27Z"
  },
  {
-  "startupName": "Bharat Semi",
-  "amountUsd": 24000000,
-  "amountOriginal": "$24 M",
-  "roundType": "seed",
+  "startupName": "VC funding rebounds as startups",
+  "amountUsd": 255000000,
+  "amountOriginal": "$255 M",
+  "roundType": null,
   "investors": [],
   "sector": null,
-  "date": "Mon, 16 Nov 2026 05:37:52 GMT",
-  "title": "Bharat Semi raises $24M to develop AI-enabled sensors",
-  "sourceUrl": "https://yourstory.com/2026/11/bharat-semi-raises-24m-to-develop-ai-enabled-sensors",
+  "date": "Mon, 23 Nov 2026 02:00:00 GMT",
+  "title": "VC funding rebounds as startups raise $255M; Women founders driving social change",
+  "sourceUrl": "https://yourstory.com/2026/11/vc-funding-rebounds-women-founders-social-change",
   "source": "YourStory",
-  "scraped_at": "2026-11-16T11:13:53Z"
+  "scraped_at": "2026-11-23T12:36:41Z"
+ },
+ {
+  "startupName": "Enterprise data security startup Matters.AI",
+  "amountUsd": 13800000,
+  "amountOriginal": "\u20b9115 Cr",
+  "roundType": "pre-series a",
+  "investors": [],
+  "sector": null,
+  "date": "Mon, 23 Nov 2026 10:58:53 GMT",
+  "title": "Enterprise data security startup Matters.AI raises Rs 115 Cr in pre-Series A round",
+  "sourceUrl": "https://yourstory.com/2026/11/enterprise-data-security-startup-matters-ai-raises-rs-115-cr-pre-series-a-round",
+  "source": "YourStory",
+  "scraped_at": "2026-11-23T12:36:41Z"
  }
 ]

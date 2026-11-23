@@ -27,6 +27,13 @@
   "via": "google",
   "checked": "2026-11-02"
  },
+ "bobabhai": {
+  "company": "Boba Bhai",
+  "url": "https://www.linkedin.com/company/boba-bhaii",
+  "employee_band": "",
+  "via": "google",
+  "checked": "2026-11-23"
+ },
  "clinicsoncloud": {
   "company": "Clinics On Cloud",
   "url": "https://www.linkedin.com/company/clinics-on-cloud",
@@ -40,6 +47,13 @@
   "employee_band": "",
   "via": "google",
   "checked": "2026-11-02"
+ },
+ "dreamteam": {
+  "company": "Dreamteam",
+  "url": "https://www.linkedin.com/company/dreamteam-agency1",
+  "employee_band": "11-50",
+  "via": "google",
+  "checked": "2026-11-23"
  },
  "eloelogroup": {
   "company": "EloElo Group",
@@ -62,6 +76,13 @@
   "via": "google",
   "checked": "2026-11-02"
  },
+ "fatehpuriahygiene": {
+  "company": "Fatehpuria Hygiene",
+  "url": "https://www.linkedin.com/company/fatehpuria-hygiene-private-limited",
+  "employee_band": "",
+  "via": "google",
+  "checked": "2026-11-23"
+ },
  "giva": {
   "company": "GIVA",
   "url": "https://www.linkedin.com/company/giva-co",
@@ -75,6 +96,20 @@
   "employee_band": "",
   "via": "google",
   "checked": "2026-11-16"
+ },
+ "henfruit": {
+  "company": "Henfruit",
+  "url": "https://www.linkedin.com/company/henfruit-in",
+  "employee_band": "",
+  "via": "google",
+  "checked": "2026-11-23"
+ },
+ "ionicwealth": {
+  "company": "Ionic Wealth",
+  "url": "https://www.linkedin.com/company/ionic-wealth",
+  "employee_band": "",
+  "via": "google",
+  "checked": "2026-11-23"
  },
  "jioplatforms": {
   "company": "Jio Platforms",
@@ -174,6 +209,13 @@
   "via": "google",
   "checked": "2026-11-02"
  },
+ "styleunion": {
+  "company": "Style Union",
+  "url": "https://www.linkedin.com/company/styleunion-in",
+  "employee_band": "",
+  "via": "google",
+  "checked": "2026-11-23"
+ },
  "twopointo": {
   "company": "Two Point O",
   "url": "https://www.linkedin.com/company/two-point-o-capital",
@@ -208,6 +250,13 @@
   "employee_band": "",
   "via": "google",
   "checked": "2026-11-02"
+ },
+ "vcfundingreboundsasstartups": {
+  "company": "VC funding rebounds as startups",
+  "url": "",
+  "employee_band": "",
+  "via": "google",
+  "checked": "2026-11-23"
  },
  "zetwerk": {
   "company": "Zetwerk",

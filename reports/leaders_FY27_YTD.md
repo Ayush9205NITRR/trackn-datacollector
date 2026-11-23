@@ -2,26 +2,31 @@
 
 | # | Company | Employee band | Stage | Last round | Raised in period | Backed by | Round date | Post date |
 |---|---|---|---|---|---|---|---|---|
-| 1 | ValueQuest Tristar Fund | — | — | $252.0M | $252.0M | — | 2026-11-02 | 2026-11-02 |
-| 2 | [SiMa.ai](https://www.linkedin.com/company/sima-ai) | — | Series C | $150.0M | $150.0M | — | 2026-09-29 | 2026-09-28 |
-| 3 | [GIVA](https://www.linkedin.com/company/giva-co) | — | — | $100.0M | $100.0M | Multiples PE | 2026-11-03 | 2026-11-03 |
-| 4 | [Ultraviolette](https://www.linkedin.com/company/ultraviolette-automotive) | 201-500 | — | $85.0M | $85.0M | — | 2026-09-23 | 2026-09-23 |
-| 5 | EloElo Group | — | Series C | $80.0M | $80.0M | Hornbill Capital | 2026-11-04 | 2026-11-04 |
-| 6 | [Ema](https://www.linkedin.com/company/ema-unlimited) | — | Series B | $77.0M | $77.0M | Creaegis | 2026-09-24 | 2026-09-24 |
-| 7 | [Update] Exclusive: RapidClaims In Talks To | — | — | $30.0M | $30.0M | — | 2026-11-05 | 2026-11-05 |
-| 8 | [Greenjoules](https://www.linkedin.com/company/greenjoules) | — | Series B | $18.1M | $18.1M | Amazon funds | 2026-11-11 | 2026-11-11 |
-| 9 | [Simplismart](https://www.linkedin.com/company/simplismart) | — | — | $14.0M | $14.0M | Dallas Venture Capital | 2026-10-27 | 2026-10-27 |
-| 10 | [Clinics On Cloud](https://www.linkedin.com/company/clinics-on-cloud) | — | Series A | $12.5M | $12.5M | — | 2026-11-02 | 2026-11-02 |
-| 11 | Peppermint Robotics | — | Series B | $12.1M | $12.1M | pi Ventures | 2026-11-04 | 2026-11-04 |
-| 12 | [CureBay](https://www.linkedin.com/company/curebayofficial) | — | Series C | $12.1M | $12.1M | IvyCap | 2026-10-22 | 2026-10-22 |
-| 13 | [Balwaan Krishi](https://www.linkedin.com/company/balwaankrishi) | — | Series B | $12.0M | $12.0M | First | 2026-09-28 | 2026-09-28 |
-| 14 | altM | — | — | $10.3M | $10.3M | Rainmatter | 2026-11-05 | 2026-11-05 |
-| 15 | [PowerUp Money](https://www.linkedin.com/company/powerup-money) | — | — | $10.0M | $10.0M | Flourish Ventures | 2026-11-03 | 2026-11-03 |
-| 16 | [Two Point O](https://www.linkedin.com/company/two-point-o-capital) | — | — | $10.0M | $10.0M | Transition Venture Capital Two Point | 2026-11-02 | 2026-11-02 |
-| 17 | Two Point O Capital | — | — | $10.0M | $10.0M | Transition VC | 2026-11-02 | 2026-11-02 |
-| 18 | [Matiks](https://www.linkedin.com/company/matiksplay) | — | Series A | $10.0M | $10.0M | General Catalyst | 2026-10-26 | 2026-10-26 |
-| 19 | AvenuesAI Q2 | — | Growth | $8.6M | $8.6M | — | 2026-11-06 | 2026-11-06 |
-| 20 | [Rotoris](https://www.linkedin.com/company/rotoris) | — | Series A | $8.4M | $8.4M | Blume Ventures | 2026-10-27 | 2026-10-27 |
+| 1 | VC funding rebounds as startups | — | — | $255.0M | $255.0M | — | 2026-11-23 | 2026-11-23 |
+| 2 | ValueQuest Tristar Fund | — | — | $252.0M | $252.0M | — | 2026-11-02 | 2026-11-02 |
+| 3 | [SiMa.ai](https://www.linkedin.com/company/sima-ai) | — | Series C | $150.0M | $150.0M | — | 2026-09-29 | 2026-09-28 |
+| 4 | [GIVA](https://www.linkedin.com/company/giva-co) | — | — | $100.0M | $100.0M | Multiples PE | 2026-11-03 | 2026-11-03 |
+| 5 | [Ultraviolette](https://www.linkedin.com/company/ultraviolette-automotive) | 201-500 | — | $85.0M | $85.0M | — | 2026-09-23 | 2026-09-23 |
+| 6 | EloElo Group | — | Series C | $80.0M | $80.0M | Hornbill Capital | 2026-11-04 | 2026-11-04 |
+| 7 | [Ema](https://www.linkedin.com/company/ema-unlimited) | — | Series B | $77.0M | $77.0M | Creaegis | 2026-09-24 | 2026-09-24 |
+| 8 | [Style Union](https://www.linkedin.com/company/styleunion-in) | — | Series E | $58.4M | $58.4M | Elev8 Venture | 2026-11-19 | 2026-11-19 |
+| 9 | [Dreamteam](https://www.linkedin.com/company/dreamteam-agency1) | 11-50 | — | $53.0M | $53.0M | Accel | 2026-11-16 | 2026-11-16 |
+| 10 | [Update] Exclusive: RapidClaims In Talks To | — | — | $30.0M | $30.0M | — | 2026-11-05 | 2026-11-05 |
+| 11 | [Ionic Wealth](https://www.linkedin.com/company/ionic-wealth) | — | — | $21.3M | $21.3M | Angel One | 2026-11-23 | 2026-11-23 |
+| 12 | [Greenjoules](https://www.linkedin.com/company/greenjoules) | — | Series B | $18.1M | $18.1M | Amazon funds | 2026-11-11 | 2026-11-11 |
+| 13 | [Boba Bhai](https://www.linkedin.com/company/boba-bhaii) | — | — | $18.0M | $18.0M | Left Lane | 2026-11-19 | 2026-11-19 |
+| 14 | [Henfruit](https://www.linkedin.com/company/henfruit-in) | — | — | $15.0M | $15.0M | Lok Capital | 2026-11-18 | 2026-11-18 |
+| 15 | [Simplismart](https://www.linkedin.com/company/simplismart) | — | — | $14.0M | $14.0M | Dallas Venture Capital | 2026-10-27 | 2026-10-27 |
+| 16 | [Clinics On Cloud](https://www.linkedin.com/company/clinics-on-cloud) | — | Series A | $12.5M | $12.5M | — | 2026-11-02 | 2026-11-02 |
+| 17 | [Fatehpuria Hygiene](https://www.linkedin.com/company/fatehpuria-hygiene-private-limited) | — | — | $12.1M | $12.1M | Madhu Kela | 2026-11-18 | 2026-11-18 |
+| 18 | Peppermint Robotics | — | Series B | $12.1M | $12.1M | pi Ventures | 2026-11-04 | 2026-11-04 |
+| 19 | [CureBay](https://www.linkedin.com/company/curebayofficial) | — | Series C | $12.1M | $12.1M | IvyCap | 2026-10-22 | 2026-10-22 |
+| 20 | [Balwaan Krishi](https://www.linkedin.com/company/balwaankrishi) | — | Series B | $12.0M | $12.0M | First | 2026-09-28 | 2026-09-28 |
+| 21 | altM | — | — | $10.3M | $10.3M | Rainmatter | 2026-11-05 | 2026-11-05 |
+| 22 | [PowerUp Money](https://www.linkedin.com/company/powerup-money) | — | — | $10.0M | $10.0M | Flourish Ventures | 2026-11-03 | 2026-11-03 |
+| 23 | [Two Point O](https://www.linkedin.com/company/two-point-o-capital) | — | — | $10.0M | $10.0M | Transition Venture Capital Two Point | 2026-11-02 | 2026-11-02 |
+| 24 | Two Point O Capital | — | — | $10.0M | $10.0M | Transition VC | 2026-11-02 | 2026-11-02 |
+| 25 | [Matiks](https://www.linkedin.com/company/matiksplay) | — | Series A | $10.0M | $10.0M | General Catalyst | 2026-10-26 | 2026-10-26 |
 
 ## M&A — FY27 YTD
 
